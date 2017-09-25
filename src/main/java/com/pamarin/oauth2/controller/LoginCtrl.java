@@ -18,7 +18,7 @@ public class LoginCtrl {
         return "";
     }
     
-    private String makeLoginSuccessUri(AuthorizaionRequest authReq){
+    private String makeLoginSuccessUri(AuthorizationRequest authReq){
         return getHostUrl() + "/api/v1/oauth/authorize?" + authReq.toString();
     }
 
@@ -31,7 +31,7 @@ public class LoginCtrl {
             @RequestParam(value = "state", required = false) String state
     ) {
 
-        AuthorizaionRequest authReq = new AuthorizaionRequest.Builder()
+        AuthorizationRequest authReq = new AuthorizationRequest.Builder()
                 .setClientId(clientId)
                 .setRedirectUri(redirectUri)
                 .setResponseType(responseType)
@@ -43,10 +43,10 @@ public class LoginCtrl {
             authReq = createDefaultAuthorizaionRequest();
         }
 
-        String loginSccessUri = makeLoginSuccessUri(authReq);
+        String loginSuccessUri = makeLoginSuccessUri(authReq);
     }
 
-    private AuthorizaionRequest createDefaultAuthorizaionRequest() {
-        return new AuthorizaionRequest();
+    private AuthorizationRequest createDefaultAuthorizaionRequest() {
+        return new AuthorizationRequest();
     }
 }

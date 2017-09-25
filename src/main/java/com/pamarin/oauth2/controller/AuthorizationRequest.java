@@ -9,7 +9,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @author jittagornp <http://jittagornp.me>
  * create : 2017/09/24
  */
-public class AuthorizaionRequest {
+public class AuthorizationRequest {
 
     private String responseType;
     private String clientId;
@@ -129,8 +129,8 @@ public class AuthorizaionRequest {
             return this;
         }
 
-        public AuthorizaionRequest build() {
-            AuthorizaionRequest request = new AuthorizaionRequest();
+        public AuthorizationRequest build() {
+            AuthorizationRequest request = new AuthorizationRequest();
             request.setClientId(clientId);
             request.setRedirectUri(redirectUri);
             request.setResponseType(responseType);

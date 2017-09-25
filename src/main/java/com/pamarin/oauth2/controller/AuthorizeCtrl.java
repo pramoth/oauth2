@@ -3,11 +3,11 @@
  */
 package com.pamarin.oauth2.controller;
 
+import com.pamarin.oauth2.service.AuthorizationService;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import static org.springframework.util.StringUtils.hasText;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,22 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AuthorizeCtrl {
 
     @Autowired
-    private ClientVerification clientVerification;
-
-    @Autowired
-    private LoginSession loginSession;
-
-    private String getHostUrl() {
-        return "";
-    }
-
-    private String generateCode(AuthorizaionRequest authReq) {
-        return null;
-    }
-
-    private String generateAccessToken(AuthorizaionRequest authReq) {
-        return null;
-    }
+    private AuthorizationService authorizationService;
 
     @GetMapping(value = "/api/v1/oauth/authorize")
     public void authorize(
@@ -45,55 +30,13 @@ public class AuthorizeCtrl {
             @RequestParam(name = "state", required = false) String state,
             HttpServletResponse resp
     ) throws IOException {
-        clientVerification.verifyClientIdAndRedirectUri(clientId, redirectUri);
-        AuthorizaionRequest authReq = new AuthorizaionRequest.Builder()
+        resp.sendRedirect(authorizationService.authorize(new AuthorizationRequest.Builder()
                 .setClientId(clientId)
                 .setRedirectUri(redirectUri)
                 .setResponseType(responseType)
                 .setScope(scope)
                 .setState(state)
-                .build();
-
-        if (loginSession.wasCreated()) {
-            obtainingAuthorization(authReq, resp);
-        } else {
-            redirect2Login(authReq, resp);
-        }
-    }
-
-    private void obtainingAuthorization(AuthorizaionRequest authReq, HttpServletResponse resp) throws IOException {
-        if (authReq.responseTypeIsCode()) {
-            generateAuthorizationCode(authReq, resp);
-            return;
-        }
-
-        if (authReq.responseTypeIsToken()) {
-            String token = generateAccessToken(authReq);
-            resp.sendRedirect(authReq.getRedirectUri() + "#token=" + token);
-            return;
-        }
-
-        throw new UnsupportedOperationException("Unsuported response_type=" + authReq.getResponseType());
-    }
-
-    private void generateAuthorizationCode(AuthorizaionRequest authReq, HttpServletResponse resp) throws IOException {
-        String code = generateCode(authReq);
-        String uri = authReq.getRedirectUri();
-        StringBuilder builder = new StringBuilder()
-                .append(uri)
-                .append(uri.contains("?") ? "&" : "?")
-                .append("code=")
-                .append(code);
-
-        if (authReq.hasStateParam()) {
-            builder.append("&state=")
-                    .append(authReq.getState());
-        }
-
-        resp.sendRedirect(builder.toString());
-    }
-
-    private void redirect2Login(AuthorizaionRequest authReq, HttpServletResponse resp) throws IOException {
-        resp.sendRedirect(getHostUrl() + "/login?" + authReq.toString());
+                .build()
+        ));
     }
 }

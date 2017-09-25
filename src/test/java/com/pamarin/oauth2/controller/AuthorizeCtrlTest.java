@@ -8,8 +8,6 @@ package com.pamarin.oauth2.controller;
  * @author jittagornp <http://jittagornp.me>  
  * create : 2017/09/25
  */
-public interface ClientVerification {
+public class AuthorizeCtrlTest {
 
-    void verifyClientIdAndRedirectUri(String clinentId, String redirectUri);
-    
 }

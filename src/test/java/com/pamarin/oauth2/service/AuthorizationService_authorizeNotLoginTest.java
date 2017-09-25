@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
  * @author jittagornp <http://jittagornp.me>
  * create : 2017/09/25
  */
-public class AuthorizationService_authorizeWasLoginTest {
+public class AuthorizationService_authorizeNotLoginTest {
 
     @InjectMocks
     private AuthorizationServiceImpl authorizationService;
@@ -34,7 +34,7 @@ public class AuthorizationService_authorizeWasLoginTest {
     }
 
     @Test
-    public void shouldBeReturnLoginUri_whenLoginSessionWasCreated() {
+    public void shouldBeReturnLoginUri_whenNotLogin() {
         when(loginSession.wasCreated()).thenReturn(false);
 
         AuthorizationRequest input = new AuthorizationRequest.Builder()

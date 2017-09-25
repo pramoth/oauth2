@@ -22,7 +22,10 @@ public class AuthorizeCtrl {
     @Autowired
     private AuthorizationService authorizationService;
 
-    @GetMapping(value = "/api/v1/oauth/authorize")
+    @GetMapping(value = "/api/v1/oauth/authorize", params = {
+        "response_type=code",
+        "response_type=token"
+    })
     public void authorize(
             @RequestParam("response_type") String responseType,
             @RequestParam("client_id") String clientId,

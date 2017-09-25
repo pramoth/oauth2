@@ -3,7 +3,7 @@
  */
 package com.pamarin.oauth2.service;
 
-import com.pamarin.oauth2.controller.AuthorizationRequest;
+import com.pamarin.oauth2.model.AuthorizationRequest;
 
 /**
  * @author jittagornp <http://jittagornp.me>

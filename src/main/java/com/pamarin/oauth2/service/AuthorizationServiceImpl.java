@@ -3,7 +3,7 @@
  */
 package com.pamarin.oauth2.service;
 
-import com.pamarin.oauth2.controller.AuthorizationRequest;
+import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.controller.LoginSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

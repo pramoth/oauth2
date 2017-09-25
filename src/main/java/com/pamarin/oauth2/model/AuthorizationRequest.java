@@ -1,7 +1,7 @@
 /*
  * Copy right 2017 Pamarin.com
  */
-package com.pamarin.oauth2.controller;
+package com.pamarin.oauth2.model;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -42,6 +42,9 @@ public class AuthorizationRequest {
     }
 
     public String getScope() {
+        if (!hasText(scope)) {
+            scope = "read";
+        }
         return scope;
     }
 
@@ -70,14 +73,19 @@ public class AuthorizationRequest {
     public boolean responseTypeIsToken() {
         return "token".equals(responseType);
     }
-    
-    public boolean hasStateParam(){
+
+    public boolean hasStateParam() {
         return responseTypeIsCode()
-                 && hasText(state);
+                && hasText(state);
     }
 
     @Override
     public String toString() {
+        
+        if(!isValidRequest()){
+            throw new IllegalArgumentException("Invalid request parameter.");
+        }
+        
         StringBuilder builder = new StringBuilder()
                 .append("response_type=")
                 .append(responseType)
@@ -86,7 +94,7 @@ public class AuthorizationRequest {
                 .append("&redirect_uri=")
                 .append(redirectUri)
                 .append("&scope=")
-                .append(scope);
+                .append(getScope());
 
         if (hasStateParam()) {
             builder.append("&state=")

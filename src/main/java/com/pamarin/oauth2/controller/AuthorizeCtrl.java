@@ -3,6 +3,7 @@
  */
 package com.pamarin.oauth2.controller;
 
+import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.service.AuthorizationService;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;

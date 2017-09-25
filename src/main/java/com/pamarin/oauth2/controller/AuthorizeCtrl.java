@@ -85,7 +85,7 @@ public class AuthorizeCtrl {
                 .append("code=")
                 .append(code);
 
-        if ("code".equals(authReq.getResponseType()) && hasText(authReq.getState())) {
+        if (authReq.hasStateParam()) {
             builder.append("&state=")
                     .append(authReq.getState());
         }

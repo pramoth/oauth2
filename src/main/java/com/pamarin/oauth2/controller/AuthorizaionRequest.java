@@ -70,6 +70,11 @@ public class AuthorizaionRequest {
     public boolean responseTypeIsToken() {
         return "token".equals(responseType);
     }
+    
+    public boolean hasStateParam(){
+        return responseTypeIsCode()
+                 && hasText(state);
+    }
 
     @Override
     public String toString() {
@@ -83,7 +88,7 @@ public class AuthorizaionRequest {
                 .append("&scope=")
                 .append(scope);
 
-        if ("code".equals(responseType) && hasText(state)) {
+        if (hasStateParam()) {
             builder.append("&state=")
                     .append(state);
         }

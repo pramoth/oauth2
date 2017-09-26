@@ -4,8 +4,15 @@
 package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.exception.InvalidClientIdAndRedirectUriException;
+import com.pamarin.oauth2.repo.AllowDomainRepo;
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import static org.mockito.Matchers.any;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
 
 /**
  * @author jittagornp <http://jittagornp.me>
@@ -13,11 +20,15 @@ import org.junit.Test;
  */
 public class ClientVerificationTest {
 
+    @InjectMocks
     private ClientVerificationImpl clientVerification;
 
+    @Mock
+    private AllowDomainRepo allowDomainRepo;
+
     @Before
-    public void before() {
-        clientVerification = new ClientVerificationImpl();
+    public void initMocks() {
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test(expected = InvalidClientIdAndRedirectUriException.class)
@@ -36,7 +47,8 @@ public class ClientVerificationTest {
 
     @Test(expected = InvalidClientIdAndRedirectUriException.class)
     public void shouldBeThrowInvalidClientIdAndRedirectUriException_whenInvalidRedirectUri() {
-        clientVerification.getAllowDomains().add("https://pamarin.com");
+        when(allowDomainRepo.findDomainByClientId(any(String.class)))
+                .thenReturn(Arrays.asList("https://pamarin.com"));
 
         String clientId = "123456";
         String redirectUri = "https://google.com";
@@ -45,7 +57,8 @@ public class ClientVerificationTest {
 
     @Test(expected = InvalidClientIdAndRedirectUriException.class)
     public void shouldBeThrowInvalidClientIdAndRedirectUriException_whenInvalidRedirectUriPath() {
-        clientVerification.getAllowDomains().add("https://pamarin.com/callback");
+        when(allowDomainRepo.findDomainByClientId(any(String.class)))
+                .thenReturn(Arrays.asList("https://pamarin.com/callback"));
 
         String clientId = "123456";
         String redirectUri = "https://pamarin.com";
@@ -54,8 +67,11 @@ public class ClientVerificationTest {
 
     @Test
     public void shouldBeOk_whenValidRedirectUri() {
-        clientVerification.getAllowDomains().add("https://pamarin.com");
-        clientVerification.getAllowDomains().add("https://google.com");
+        when(allowDomainRepo.findDomainByClientId(any(String.class)))
+                .thenReturn(Arrays.asList(
+                        "https://pamarin.com",
+                        "https://google.com"
+                ));
 
         String clientId = "123456";
         String redirectUri = "https://google.com";

@@ -9,8 +9,10 @@ import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AuthorizationResponse;
 import com.pamarin.oauth2.model.CodeAccessTokenRequest;
 import com.pamarin.oauth2.model.RefreshAccessTokenRequest;
+import com.pamarin.oauth2.repo.AllowDomainRepo;
 import com.pamarin.oauth2.service.AccessTokenGenerator;
 import com.pamarin.oauth2.service.AuthorizationCodeGenerator;
+import java.util.Arrays;
 import java.util.UUID;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +23,11 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class OAuthConf {
+
+    @Bean
+    public AllowDomainRepo newAllowDomainRepo() {
+        return (clientId) -> Arrays.asList("http://localhost");
+    }
 
     @Bean
     public LoginSession newLoginSession() {

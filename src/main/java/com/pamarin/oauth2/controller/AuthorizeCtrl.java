@@ -22,11 +22,27 @@ public class AuthorizeCtrl {
     @Autowired
     private AuthorizationService authorizationService;
 
-    @GetMapping(value = "/api/v1/oauth/authorize", params = {
-        "response_type=code",
-        "response_type=token"
-    }, consumes = "application/x-www-form-urlencoded")
-    public void authorize(
+    @GetMapping(value = "/api/v1/oauth/authorize", params = "response_type=code")
+    public void authorizeReturnCode(
+            @RequestParam("response_type") String responseType,
+            @RequestParam("client_id") String clientId,
+            @RequestParam("redirect_uri") String redirectUri,
+            @RequestParam(value = "scope", required = false, defaultValue = "read") String scope,
+            @RequestParam(name = "state", required = false) String state,
+            HttpServletResponse resp
+    ) throws IOException {
+        resp.sendRedirect(authorizationService.authorize(new AuthorizationRequest.Builder()
+                .setClientId(clientId)
+                .setRedirectUri(redirectUri)
+                .setResponseType(responseType)
+                .setScope(scope)
+                .setState(state)
+                .build()
+        ));
+    }
+
+    @GetMapping(value = "/api/v1/oauth/authorize", params = "response_type=token")
+    public void authorizeReturnToken(
             @RequestParam("response_type") String responseType,
             @RequestParam("client_id") String clientId,
             @RequestParam("redirect_uri") String redirectUri,

@@ -31,7 +31,7 @@ public class OAuthConf {
 
     @Bean
     public LoginSession newLoginSession() {
-        return () -> true;
+        return () -> false;
     }
 
     @Bean

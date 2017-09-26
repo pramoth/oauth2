@@ -7,6 +7,7 @@ import com.pamarin.oauth2.model.AuthorizationRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author jittagornp <http://jittagornp.me>
@@ -19,12 +20,12 @@ public class LoginCtrl {
         return "";
     }
     
-    private String makeLoginSuccessUri(AuthorizationRequest authReq){
+    private String makeSuccessUri(AuthorizationRequest authReq){
         return getHostUrl() + "/api/v1/oauth/authorize?" + authReq.toString();
     }
 
     @GetMapping("/login")
-    public void login(
+    public ModelAndView login(
             @RequestParam(value = "response_type", required = false) String responseType,
             @RequestParam(value = "client_id", required = false) String clientId,
             @RequestParam(value = "redirect_uri", required = false) String redirectUri,
@@ -44,7 +45,8 @@ public class LoginCtrl {
             authReq = createDefaultAuthorizaionRequest();
         }
 
-        String successUri = makeLoginSuccessUri(authReq);
+        String successUri = makeSuccessUri(authReq);
+        return new ModelAndView("login");
     }
 
     private AuthorizationRequest createDefaultAuthorizaionRequest() {

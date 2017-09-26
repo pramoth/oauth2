@@ -33,6 +33,11 @@ public interface HttpBasicAuthenParser {
         }
 
         @Override
+        public String toString() {
+            return "Output{" + "username=" + username + ", password=" + password + '}';
+        }
+
+        @Override
         public int hashCode() {
             int hash = 3;
             hash = 59 * hash + Objects.hashCode(this.username);

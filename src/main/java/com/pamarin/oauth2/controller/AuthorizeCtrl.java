@@ -25,7 +25,7 @@ public class AuthorizeCtrl {
     @GetMapping(value = "/api/v1/oauth/authorize", params = {
         "response_type=code",
         "response_type=token"
-    })
+    }, consumes = "application/x-www-form-urlencoded")
     public void authorize(
             @RequestParam("response_type") String responseType,
             @RequestParam("client_id") String clientId,

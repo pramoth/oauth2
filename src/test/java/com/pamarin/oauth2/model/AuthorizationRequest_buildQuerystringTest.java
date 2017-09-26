@@ -10,14 +10,7 @@ import org.junit.Test;
  * @author jittagornp <http://jittagornp.me>
  * create : 2017/09/25
  */
-public class AuthorizationRequest_toStringTest {
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldBeThrowIllegalArgumentException_whenInvalidRequest() {
-        AuthorizationRequest input = new AuthorizationRequest.Builder()
-                .build();
-        String output = input.toString();
-    }
+public class AuthorizationRequest_buildQuerystringTest {
 
     @Test
     public void shouldBeOk_whenValidRequest1() {
@@ -26,7 +19,7 @@ public class AuthorizationRequest_toStringTest {
                 .setClientId("1234")
                 .setRedirectUri("https://pamarin.com")
                 .build();
-        String output = input.toString();
+        String output = input.buildQuerystring();
         String expected = "response_type=code&client_id=1234&redirect_uri=https://pamarin.com&scope=read";
         assertThat(output).isEqualTo(expected);
     }
@@ -39,8 +32,8 @@ public class AuthorizationRequest_toStringTest {
                 .setRedirectUri("https://pamarin.com")
                 .setState("XYZ")
                 .build();
-        String output = input.toString();
-        String expected = "response_type=token&client_id=1234&redirect_uri=https://pamarin.com&scope=read";
+        String output = input.buildQuerystring();
+        String expected = "response_type=token&client_id=1234&redirect_uri=https://pamarin.com&scope=read&state=XYZ";
         assertThat(output).isEqualTo(expected);
     }
 
@@ -52,7 +45,7 @@ public class AuthorizationRequest_toStringTest {
                 .setRedirectUri("https://pamarin.com")
                 .setState("XYZ")
                 .build();
-        String output = input.toString();
+        String output = input.buildQuerystring();
         String expected = "response_type=code&client_id=1234&redirect_uri=https://pamarin.com&scope=read&state=XYZ";
         assertThat(output).isEqualTo(expected);
     }

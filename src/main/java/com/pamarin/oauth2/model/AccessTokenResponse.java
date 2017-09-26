@@ -4,6 +4,7 @@
 package com.pamarin.oauth2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * @author jittagornp <http://jittagornp.me>
@@ -22,6 +23,8 @@ public class AccessTokenResponse {
 
     @JsonProperty("refresh_token")
     private String refreshToken;
+
+    private String state;
 
     public String getAccessToken() {
         return accessToken;
@@ -55,6 +58,29 @@ public class AccessTokenResponse {
         this.refreshToken = refreshToken;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String buildQuerystringWithoutRefreshToken() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("access_token=")
+                .append(accessToken);
+        if (hasText(state)) {
+            builder.append("&state=")
+                    .append(state);
+        }
+        builder.append("&token_type=")
+                .append(tokenType)
+                .append("&expires_in=")
+                .append(expiresIn);
+        return builder.toString();
+    }
+
     public static class Builder {
 
         private String accessToken;
@@ -64,6 +90,8 @@ public class AccessTokenResponse {
         private long expiresIn;
 
         private String refreshToken;
+
+        private String state;
 
         public Builder setAccessToken(String accessToken) {
             this.accessToken = accessToken;
@@ -84,13 +112,19 @@ public class AccessTokenResponse {
             this.refreshToken = refreshToken;
             return this;
         }
-        
-        public AccessTokenResponse build(){
+
+        public Builder setState(String state) {
+            this.state = state;
+            return this;
+        }
+
+        public AccessTokenResponse build() {
             AccessTokenResponse response = new AccessTokenResponse();
             response.setAccessToken(accessToken);
             response.setExpiresIn(expiresIn);
             response.setRefreshToken(refreshToken);
             response.setTokenType(tokenType);
+            response.setState(state);
             return response;
         }
 

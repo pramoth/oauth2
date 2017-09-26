@@ -75,17 +75,10 @@ public class AuthorizationRequest {
     }
 
     public boolean hasStateParam() {
-        return responseTypeIsCode()
-                && hasText(state);
+        return hasText(state);
     }
 
-    @Override
-    public String toString() {
-        
-        if(!isValidRequest()){
-            throw new IllegalArgumentException("Invalid request parameter.");
-        }
-        
+    public String buildQuerystring() {
         StringBuilder builder = new StringBuilder()
                 .append("response_type=")
                 .append(responseType)

@@ -109,6 +109,8 @@ public class AuthorizationService_authorizeWasLoginTest {
                 .thenReturn(
                         new AccessTokenResponse.Builder()
                                 .setAccessToken("ABCDEF")
+                                .setTokenType("bearer")
+                                .setExpiresIn(3600)
                                 .build()
                 );
 
@@ -121,7 +123,7 @@ public class AuthorizationService_authorizeWasLoginTest {
                 .build();
 
         String output = authorizationService.authorize(input);
-        String expected = "https://pamarin.com/callback#token=ABCDEF";
+        String expected = "https://pamarin.com/callback#access_token=ABCDEF&state=XYZ&token_type=bearer&expires_in=3600";
         assertThat(output).isEqualTo(expected);
     }
 }

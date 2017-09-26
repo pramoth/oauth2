@@ -44,7 +44,7 @@ public class LoginCtrl {
             authReq = createDefaultAuthorizaionRequest();
         }
 
-        String loginSuccessUri = makeLoginSuccessUri(authReq);
+        String successUri = makeLoginSuccessUri(authReq);
     }
 
     private AuthorizationRequest createDefaultAuthorizaionRequest() {

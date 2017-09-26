@@ -46,7 +46,7 @@ public class AuthorizationService_authorizeNotLoginTest {
                 .build();
 
         String output = authorizationService.authorize(input);
-        String expected = "/login?" + input.toString();
+        String expected = "/login?" + input.buildQuerystring();
         assertThat(output).isEqualTo(expected);
     }
 }

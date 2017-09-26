@@ -5,6 +5,7 @@ package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.controller.LoginSession;
+import com.pamarin.oauth2.model.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,17 +33,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         return null;
     }
 
-    private String generateAccessToken(AuthorizationRequest authReq) {
-        return accessTokenGenerator.generate(authReq).getAccessToken();
-    }
-
     @Override
     public String authorize(AuthorizationRequest authReq) {
         clientVerification.verifyClientIdAndRedirectUri(authReq.getClientId(), authReq.getRedirectUri());
         if (loginSession.wasCreated()) {
             return obtainingAuthorization(authReq);
         } else {
-            return getHostUrl() + "/login?" + authReq.toString();
+            return getHostUrl() + "/login?" + authReq.buildQuerystring();
         }
     }
 
@@ -52,7 +49,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         }
 
         if (authReq.responseTypeIsToken()) {
-            return authReq.getRedirectUri() + "#token=" + generateAccessToken(authReq);
+            AccessTokenResponse response = accessTokenGenerator.generate(authReq);
+            response.setState(authReq.getState());
+            return authReq.getRedirectUri() + "#" + response.buildQuerystringWithoutRefreshToken();
         }
 
         throw new UnsupportedOperationException("Unsuported response_type=" + authReq.getResponseType());

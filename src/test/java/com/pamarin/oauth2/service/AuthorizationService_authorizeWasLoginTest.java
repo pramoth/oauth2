@@ -4,11 +4,13 @@
 package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.controller.LoginSession;
+import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import static org.mockito.Matchers.any;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
@@ -27,6 +29,9 @@ public class AuthorizationService_authorizeWasLoginTest {
 
     @Mock
     private LoginSession loginSession;
+
+    @Mock
+    private AccessTokenGenerator accessTokenGenerator;
 
     @Before
     public void initMocks() {
@@ -100,6 +105,12 @@ public class AuthorizationService_authorizeWasLoginTest {
     @Test
     public void shouldBeReturnToken_whenResponseTypeIsToken() {
         when(loginSession.wasCreated()).thenReturn(true);
+        when(accessTokenGenerator.generate(any(AuthorizationRequest.class)))
+                .thenReturn(
+                        new AccessTokenResponse.Builder()
+                                .setAccessToken("ABCDEF")
+                                .build()
+                );
 
         AuthorizationRequest input = new AuthorizationRequest.Builder()
                 .setClientId("1234")
@@ -110,7 +121,7 @@ public class AuthorizationService_authorizeWasLoginTest {
                 .build();
 
         String output = authorizationService.authorize(input);
-        String expected = "https://pamarin.com/callback#token=null";
+        String expected = "https://pamarin.com/callback#token=ABCDEF";
         assertThat(output).isEqualTo(expected);
     }
 }

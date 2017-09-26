@@ -21,6 +21,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Autowired
     private LoginSession loginSession;
 
+    @Autowired
+    private AccessTokenGenerator accessTokenGenerator;
+
     private String getHostUrl() {
         return "";
     }
@@ -30,7 +33,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     private String generateAccessToken(AuthorizationRequest authReq) {
-        return null;
+        return accessTokenGenerator.generate(authReq).getAccessToken();
     }
 
     @Override

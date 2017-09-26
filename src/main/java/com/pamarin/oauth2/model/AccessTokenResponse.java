@@ -55,4 +55,44 @@ public class AccessTokenResponse {
         this.refreshToken = refreshToken;
     }
 
+    public static class Builder {
+
+        private String accessToken;
+
+        private String tokenType;
+
+        private long expiresIn;
+
+        private String refreshToken;
+
+        public Builder setAccessToken(String accessToken) {
+            this.accessToken = accessToken;
+            return this;
+        }
+
+        public Builder setTokenType(String tokenType) {
+            this.tokenType = tokenType;
+            return this;
+        }
+
+        public Builder setExpiresIn(long expiresIn) {
+            this.expiresIn = expiresIn;
+            return this;
+        }
+
+        public Builder setRefreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
+            return this;
+        }
+        
+        public AccessTokenResponse build(){
+            AccessTokenResponse response = new AccessTokenResponse();
+            response.setAccessToken(accessToken);
+            response.setExpiresIn(expiresIn);
+            response.setRefreshToken(refreshToken);
+            response.setTokenType(tokenType);
+            return response;
+        }
+
+    }
 }

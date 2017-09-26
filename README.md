@@ -1,7 +1,7 @@
 # OAuth2
 OAuth2 example for Java Spring-boot
 
-Implement from spec https://tools.ietf.org/html/rfc6749
+Implement from spec `RFC6749` : https://tools.ietf.org/html/rfc6749
 
 ### How to run Application
 

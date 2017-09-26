@@ -4,9 +4,7 @@
 package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.exception.InvalidClientIdAndClientSecretException;
-import com.pamarin.oauth2.repo.AllowDomainRepo;
 import com.pamarin.oauth2.repo.ClientRepo;
-import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

@@ -6,6 +6,7 @@ package com.pamarin.oauth2.service;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.controller.LoginSession;
 import com.pamarin.oauth2.model.AccessTokenResponse;
+import com.pamarin.oauth2.model.AuthorizationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +24,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private LoginSession loginSession;
 
     @Autowired
+    private AuthorizationCodeGenerator authorizationCodeGenerator;
+
+    @Autowired
     private AccessTokenGenerator accessTokenGenerator;
 
     private String getHostUrl() {
         return "";
-    }
-
-    private String generateCode(AuthorizationRequest authReq) {
-        return null;
     }
 
     @Override
@@ -44,34 +44,25 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     private String obtainingAuthorization(AuthorizationRequest authReq) {
+        //https://tools.ietf.org/html/rfc6749#section-4.1.2
         if (authReq.responseTypeIsCode()) {
-            return generateAuthorizationCode(authReq);
+            AuthorizationResponse response = authorizationCodeGenerator.generate(authReq);
+            if (authReq.hasStateParam()) {
+                response.setState(authReq.getState());
+            }
+            String uri = authReq.getRedirectUri();
+            return uri + (uri.contains("?") ? "&" : "?") + response.buildQuerystring();
         }
 
+        //https://tools.ietf.org/html/rfc6749#section-4.2.2
         if (authReq.responseTypeIsToken()) {
             AccessTokenResponse response = accessTokenGenerator.generate(authReq);
-            response.setState(authReq.getState());
+            if (authReq.hasStateParam()) {
+                response.setState(authReq.getState());
+            }
             return authReq.getRedirectUri() + "#" + response.buildQuerystringWithoutRefreshToken();
         }
 
         throw new UnsupportedOperationException("Unsuported response_type=" + authReq.getResponseType());
     }
-
-    private String generateAuthorizationCode(AuthorizationRequest authReq) {
-        String code = generateCode(authReq);
-        String uri = authReq.getRedirectUri();
-        StringBuilder builder = new StringBuilder()
-                .append(uri)
-                .append(uri.contains("?") ? "&" : "?")
-                .append("code=")
-                .append(code);
-
-        if (authReq.hasStateParam()) {
-            builder.append("&state=")
-                    .append(authReq.getState());
-        }
-
-        return builder.toString();
-    }
-
 }

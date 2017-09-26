@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
+ * https://tools.ietf.org/html/rfc6749#section-4.1.4
+ * 
  * @author jittagornp <http://jittagornp.me>
  * create : 2017/09/25
  */

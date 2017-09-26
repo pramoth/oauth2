@@ -6,6 +6,7 @@ package com.pamarin.oauth2.service;
 import com.pamarin.oauth2.controller.LoginSession;
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationRequest;
+import com.pamarin.oauth2.model.AuthorizationResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +30,9 @@ public class AuthorizationService_authorizeWasLoginTest {
 
     @Mock
     private LoginSession loginSession;
+
+    @Mock
+    private AuthorizationCodeGenerator authorizationCodeGenerator;
 
     @Mock
     private AccessTokenGenerator accessTokenGenerator;
@@ -56,6 +60,12 @@ public class AuthorizationService_authorizeWasLoginTest {
     @Test
     public void shouldBeReturnCode_whenResponseTypeIsCode() {
         when(loginSession.wasCreated()).thenReturn(true);
+        when(authorizationCodeGenerator.generate(any(AuthorizationRequest.class)))
+                .thenReturn(
+                        new AuthorizationResponse.Builder()
+                                .setCode("ABCD")
+                                .build()
+                );
 
         AuthorizationRequest input = new AuthorizationRequest.Builder()
                 .setClientId("1234")
@@ -65,13 +75,19 @@ public class AuthorizationService_authorizeWasLoginTest {
                 .build();
 
         String output = authorizationService.authorize(input);
-        String expected = "https://pamarin.com/callback?code=null";
+        String expected = "https://pamarin.com/callback?code=ABCD";
         assertThat(output).isEqualTo(expected);
     }
 
     @Test
     public void shouldBeReturnCode_whenResponseTypeIsCodeAndHasQuerystring() {
         when(loginSession.wasCreated()).thenReturn(true);
+        when(authorizationCodeGenerator.generate(any(AuthorizationRequest.class)))
+                .thenReturn(
+                        new AuthorizationResponse.Builder()
+                                .setCode("ABCD")
+                                .build()
+                );
 
         AuthorizationRequest input = new AuthorizationRequest.Builder()
                 .setClientId("1234")
@@ -81,13 +97,19 @@ public class AuthorizationService_authorizeWasLoginTest {
                 .build();
 
         String output = authorizationService.authorize(input);
-        String expected = "https://pamarin.com/callback?q=AAA&code=null";
+        String expected = "https://pamarin.com/callback?q=AAA&code=ABCD";
         assertThat(output).isEqualTo(expected);
     }
 
     @Test
     public void shouldBeReturnCodeAndState_whenResponseTypeIsCode() {
         when(loginSession.wasCreated()).thenReturn(true);
+        when(authorizationCodeGenerator.generate(any(AuthorizationRequest.class)))
+                .thenReturn(
+                        new AuthorizationResponse.Builder()
+                                .setCode("ABCD")
+                                .build()
+                );
 
         AuthorizationRequest input = new AuthorizationRequest.Builder()
                 .setClientId("1234")
@@ -98,7 +120,7 @@ public class AuthorizationService_authorizeWasLoginTest {
                 .build();
 
         String output = authorizationService.authorize(input);
-        String expected = "https://pamarin.com/callback?code=null&state=XYZ";
+        String expected = "https://pamarin.com/callback?code=ABCD&state=XYZ";
         assertThat(output).isEqualTo(expected);
     }
 

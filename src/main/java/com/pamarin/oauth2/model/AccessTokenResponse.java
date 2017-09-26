@@ -3,6 +3,7 @@
  */
 package com.pamarin.oauth2.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -26,6 +27,7 @@ public class AccessTokenResponse {
     @JsonProperty("refresh_token")
     private String refreshToken;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String state;
 
     public String getAccessToken() {

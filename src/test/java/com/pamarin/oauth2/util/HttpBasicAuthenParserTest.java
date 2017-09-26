@@ -102,4 +102,14 @@ public class HttpBasicAuthenParserTest {
 
         assertThat(output).isEqualTo(expected);
     }
+    
+     @Test
+    public void shouldBeOk_whenInputIsBasicDGVzdDowMDAw_caseInsensitive() {
+
+        String input = "basic dGVzdDowMDAw";
+        Output output = parser.parse(input);
+        Output expected = new Output("test", "0000");
+
+        assertThat(output).isEqualTo(expected);
+    }
 }

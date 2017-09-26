@@ -18,7 +18,7 @@ import org.mockito.MockitoAnnotations;
  * @author jittagornp <http://jittagornp.me>
  * create : 2017/09/25
  */
-public class ClientVerificationTest {
+public class ClientVerification_verifyClientIdAndRedirectUriTest {
 
     @InjectMocks
     private ClientVerificationImpl clientVerification;

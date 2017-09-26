@@ -10,6 +10,7 @@ import com.pamarin.oauth2.model.AuthorizationResponse;
 import com.pamarin.oauth2.model.CodeAccessTokenRequest;
 import com.pamarin.oauth2.model.RefreshAccessTokenRequest;
 import com.pamarin.oauth2.repo.AllowDomainRepo;
+import com.pamarin.oauth2.repo.ClientRepo;
 import com.pamarin.oauth2.service.AccessTokenGenerator;
 import com.pamarin.oauth2.service.AuthorizationCodeGenerator;
 import java.util.Arrays;
@@ -23,6 +24,11 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class OAuthConf {
+
+    @Bean
+    public ClientRepo newClientRepo() {
+        return (clientId) -> "password";
+    }
 
     @Bean
     public AllowDomainRepo newAllowDomainRepo() {

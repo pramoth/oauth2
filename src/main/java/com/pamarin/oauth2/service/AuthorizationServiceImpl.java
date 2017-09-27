@@ -3,6 +3,7 @@
  */
 package com.pamarin.oauth2.service;
 
+import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationResponse;
@@ -43,25 +44,33 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     private String obtainingAuthorization(AuthorizationRequest authReq) {
-        //https://tools.ietf.org/html/rfc6749#section-4.1.2
         if (authReq.responseTypeIsCode()) {
-            AuthorizationResponse response = authorizationCodeGenerator.generate(authReq);
-            if (authReq.hasStateParam()) {
-                response.setState(authReq.getState());
-            }
-            String uri = authReq.getRedirectUri();
-            return uri + (uri.contains("?") ? "&" : "?") + response.buildQuerystring();
+            return generateAuthorizationCode(authReq);
         }
 
-        //https://tools.ietf.org/html/rfc6749#section-4.2.2
         if (authReq.responseTypeIsToken()) {
-            AccessTokenResponse response = accessTokenGenerator.generate(authReq);
-            if (authReq.hasStateParam()) {
-                response.setState(authReq.getState());
-            }
-            return authReq.getRedirectUri() + "#" + response.buildQuerystringWithoutRefreshToken();
+            return generateAccessToken(authReq);
         }
 
-        throw new UnsupportedOperationException("Unsuported response_type=" + authReq.getResponseType());
+        throw new InvalidResponseTypeException(authReq.getResponseType());
+    }
+
+    //https://tools.ietf.org/html/rfc6749#section-4.1.2
+    private String generateAuthorizationCode(AuthorizationRequest authReq) {
+        AuthorizationResponse response = authorizationCodeGenerator.generate(authReq);
+        if (authReq.hasStateParam()) {
+            response.setState(authReq.getState());
+        }
+        String uri = authReq.getRedirectUri();
+        return uri + (uri.contains("?") ? "&" : "?") + response.buildQuerystring();
+    }
+
+    //https://tools.ietf.org/html/rfc6749#section-4.2.2
+    private String generateAccessToken(AuthorizationRequest authReq) {
+        AccessTokenResponse response = accessTokenGenerator.generate(authReq);
+        if (authReq.hasStateParam()) {
+            response.setState(authReq.getState());
+        }
+        return authReq.getRedirectUri() + "#" + response.buildQuerystringWithoutRefreshToken();
     }
 }

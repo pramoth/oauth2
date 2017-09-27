@@ -3,6 +3,7 @@
  */
 package com.pamarin.oauth2.service;
 
+import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AuthorizationResponse;
@@ -41,7 +42,7 @@ public class AuthorizationService_authorizeWasLoginTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test(expected = InvalidResponseTypeException.class)
     public void shouldBeThrowUnsupportedOperationException_whenInvalidResponseType() {
         when(loginSession.wasCreated()).thenReturn(true);
 

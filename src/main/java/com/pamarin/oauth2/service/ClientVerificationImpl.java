@@ -9,7 +9,6 @@ import com.pamarin.oauth2.repo.AllowDomainRepo;
 import com.pamarin.oauth2.repo.ClientRepo;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.config.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import static org.springframework.util.StringUtils.hasText;

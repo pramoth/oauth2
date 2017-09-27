@@ -94,6 +94,14 @@ public class ErrorResponse {
         }
     }
 
+    public String makeRedirectUri(String redirectUri) {
+        if (!hasText(redirectUri)) {
+            throw new IllegalArgumentException("Required redirectUri.");
+        }
+        return redirectUri + (redirectUri.contains("?") ? "&" : "?")
+                + buildQuerystring();
+    }
+
     /**
      * The request is missing a required parameter, includes an unsupported
      * parameter value (other than grant type), repeats a parameter, includes

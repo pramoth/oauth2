@@ -1,5 +1,5 @@
 /*
- * Copy right 2017 Pamarin.com
+ * Copyright 2017 Pamarin.com
  */
 package com.pamarin.oauth2.controller;
 

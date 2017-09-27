@@ -74,9 +74,7 @@ public class AuthorizeEndpointCtrl {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidClientIdException.class)
     public void invalidClient(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String uri = request.getParameter("redirect_uri");
-        if (hasText(uri)) {
-            response.sendRedirect(ErrorResponse.invalidClient().makeRedirectUri(uri));
-        }
+        ErrorResponse.invalidClient()
+                .sendRedirect(request, response);
     }
 }

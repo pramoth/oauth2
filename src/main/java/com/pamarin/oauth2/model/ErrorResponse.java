@@ -5,6 +5,9 @@ package com.pamarin.oauth2.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -100,6 +103,13 @@ public class ErrorResponse {
         }
         return redirectUri + (redirectUri.contains("?") ? "&" : "?")
                 + buildQuerystring();
+    }
+
+    public void sendRedirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String uri = request.getParameter("redirect_uri");
+        if (hasText(uri)) {
+            response.sendRedirect(makeRedirectUri(uri));
+        }
     }
 
     /**

@@ -79,23 +79,4 @@
         <!-- Test ********************************************************** -->
 
     </dependencies>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.6.201602180812</version>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.3.0</version>
-                <configuration>
-                    <repoToken>KaJTMVQDbCCVqlEX2Txx5lxdXqFDHPrTl</repoToken>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

@@ -1,4 +1,8 @@
-# OAuth2
+OAuth2
+=================
+
+[![Build Status](https://travis-ci.org/jittagornp/oauth2?branch=master)](https://travis-ci.org/jittagornp/oauth2)
+
 OAuth2 example for Java Spring-boot
 
 Implement from spec `RFC6749` : https://tools.ietf.org/html/rfc6749

@@ -1,7 +1,7 @@
 OAuth2
 =================
 
-[![Build Status](https://travis-ci.org/jittagornp/oauth2?branch=master)](https://travis-ci.org/jittagornp/oauth2)
+[![Build Status](https://travis-ci.org/jittagornp/oauth2.svg?branch=master)](https://travis-ci.org/jittagornp/oauth2)
 
 OAuth2 example for Java Spring-boot
 

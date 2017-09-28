@@ -105,10 +105,13 @@ public class ErrorResponse {
                 + buildQuerystring();
     }
 
-    public void sendRedirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void returnError(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String uri = request.getParameter("redirect_uri");
         if (hasText(uri)) {
             response.sendRedirect(makeRedirectUri(uri));
+        } else {
+            response.setContentType("text/html");
+            response.getWriter().print(getErrorDescription());
         }
     }
 

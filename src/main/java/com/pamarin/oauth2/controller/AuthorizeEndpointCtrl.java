@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import static org.springframework.util.StringUtils.hasText;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -75,6 +74,6 @@ public class AuthorizeEndpointCtrl {
     @ExceptionHandler(InvalidClientIdException.class)
     public void invalidClient(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ErrorResponse.invalidClient()
-                .sendRedirect(request, response);
+                .returnError(request, response);
     }
 }

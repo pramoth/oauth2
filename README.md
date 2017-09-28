@@ -1,13 +1,18 @@
-# OAuth2
-OAuth2 example for Java Spring-boot
+OAuth 2.0
+=================
 
-Implement from spec `RFC6749` : https://tools.ietf.org/html/rfc6749
+[![Build Status](https://travis-ci.org/jittagornp/oauth2.svg?branch=master)](https://travis-ci.org/jittagornp/oauth2)
+[![Coverage Status](https://coveralls.io/repos/github/jittagornp/oauth2/badge.svg)](https://coveralls.io/github/jittagornp/oauth2)
+
+ตัวอย่างการเขียน OAuth 2.0 - Java Spring-Boot
+
+Implement ตาม spec `RFC6749` : https://tools.ietf.org/html/rfc6749
 
 ### Requires
 - Java 8
 - Apache Maven 3.0.4
 
-### How to run Application
+### วิธีการ Run Project
 
 1. build
 

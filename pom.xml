@@ -80,17 +80,4 @@
 
     </dependencies>
     
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.3.0</version>
-                <configuration>
-                    <repoToken>hcx3i7eon8VnVOKudU4aByERB9iJ2oGbC</repoToken>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    
 </project>

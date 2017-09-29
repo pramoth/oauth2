@@ -92,6 +92,17 @@ public class HttpBasicAuthenParserTest {
         Output output = parser.parse(input);
 
     }
+    
+    @Test
+    public void shouldBeInvalidCredentialValue_whenInputIsBasicDGVzdDoxMjM0OjU2Nzg() {
+
+        exception.expect(InvalidHttpBasicAuthenException.class);
+        exception.expectMessage("Invalid Credential value (Invalid basic authen format).");
+
+        String input = "Basic dGVzdDoxMjM0OjU2Nzg=";
+        Output output = parser.parse(input);
+
+    }
 
     @Test
     public void shouldBeOk_whenInputIsBasicDGVzdDoxMjM0NTY() {

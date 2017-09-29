@@ -7,9 +7,9 @@ import com.pamarin.oauth2.exception.InvalidHttpBasicAuthenException;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
-import org.springframework.util.StringUtils;
 import static org.springframework.util.StringUtils.hasText;
 
 /**

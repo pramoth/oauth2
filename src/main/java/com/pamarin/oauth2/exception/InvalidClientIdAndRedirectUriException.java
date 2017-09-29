@@ -13,7 +13,8 @@ public class InvalidClientIdAndRedirectUriException extends RuntimeException {
 
     private final String redirectUri;
 
-    public InvalidClientIdAndRedirectUriException(String clientId, String redirectUri) {
+    public InvalidClientIdAndRedirectUriException(String clientId, String redirectUri, String message) {
+        super(message);
         this.clientId = clientId;
         this.redirectUri = redirectUri;
     }

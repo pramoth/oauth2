@@ -13,7 +13,8 @@ public class InvalidClientIdAndClientSecretException extends RuntimeException {
 
     private final String clientSecret;
 
-    public InvalidClientIdAndClientSecretException(String clientId, String clientSecret) {
+    public InvalidClientIdAndClientSecretException(String clientId, String clientSecret, String message) {
+        super(message);
         this.clientId = clientId;
         this.clientSecret = clientSecret;
     }

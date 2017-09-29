@@ -5,8 +5,6 @@ package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.exception.InvalidClientIdAndClientSecretException;
 import com.pamarin.oauth2.exception.InvalidClientIdAndRedirectUriException;
-import com.pamarin.oauth2.repo.AllowDomainRepo;
-import com.pamarin.oauth2.repo.ClientRepo;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,42 +19,62 @@ import static org.springframework.util.StringUtils.hasText;
 public class ClientVerificationImpl implements ClientVerification {
 
     @Autowired
-    private ClientRepo clientRepo;
+    private ClientService clientService;
 
     @Autowired
-    private AllowDomainRepo allowDomainRepo;
+    private AllowDomainService allowDomainService;
 
     @Override
     public void verifyClientIdAndRedirectUri(String clientId, String redirectUri) {
         boolean isValid = hasText(clientId) && hasText(redirectUri);
         if (!isValid) {
-            throw new InvalidClientIdAndRedirectUriException(clientId, redirectUri);
+            throw new InvalidClientIdAndRedirectUriException(
+                    clientId,
+                    redirectUri,
+                    "Required clientId and redirectUri."
+            );
         }
 
-        List<String> domains = allowDomainRepo.findDomainByClientId(clientId);
+        List<String> domains = allowDomainService.findDomainByClientId(clientId);
         for (String domain : domains) {
             if (redirectUri.startsWith(domain)) {
                 return;
             }
         }
 
-        throw new InvalidClientIdAndRedirectUriException(clientId, redirectUri);
+        throw new InvalidClientIdAndRedirectUriException(
+                clientId,
+                redirectUri,
+                "Invalid Domains."
+        );
     }
 
     @Override
     public void verifyClientIdAndClientSecret(String clientId, String clientSecret) {
         boolean isValid = hasText(clientId) && hasText(clientSecret);
         if (!isValid) {
-            throw new InvalidClientIdAndClientSecretException(clientId, clientSecret);
+            throw new InvalidClientIdAndClientSecretException(
+                    clientId,
+                    clientSecret,
+                    "Required clientId and clientSecret."
+            );
         }
 
-        String secret = clientRepo.findClientSecretByClientId(clientId);
+        String secret = clientService.findClientSecretByClientId(clientId);
         if (!hasText(secret)) {
-            throw new InvalidClientIdAndClientSecretException(clientId, clientSecret);
+            throw new InvalidClientIdAndClientSecretException(
+                    clientId,
+                    clientSecret,
+                    "Empty clientSecret."
+            );
         }
 
         if (!secret.equals(clientSecret)) {
-            throw new InvalidClientIdAndClientSecretException(clientId, clientSecret);
+            throw new InvalidClientIdAndClientSecretException(
+                    clientId,
+                    clientSecret,
+                    "Invalid clientSecret."
+            );
         }
     }
 

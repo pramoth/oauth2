@@ -4,9 +4,11 @@
 package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.exception.InvalidClientIdAndClientSecretException;
-import com.pamarin.oauth2.repo.ClientRepo;
+import com.pamarin.oauth2.exception.InvalidClientIdAndRedirectUriException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import static org.mockito.Matchers.any;
 import org.mockito.Mock;
@@ -19,34 +21,49 @@ import org.mockito.MockitoAnnotations;
  */
 public class ClientVerification_verifyClientIdAndClientSecretTest {
 
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
+
     @InjectMocks
     private ClientVerificationImpl clientVerification;
 
     @Mock
-    private ClientRepo clientRepo;
+    private ClientService clientService;
 
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test(expected = InvalidClientIdAndClientSecretException.class)
+    @Test
     public void shouldBeThrowInvalidClientIdAndClientSecretException_whenClientIdAndClientSecretIsNull() {
+
+        exception.expect(InvalidClientIdAndClientSecretException.class);
+        exception.expectMessage("Required clientId and clientSecret.");
+
         String clientId = null;
         String clientSecret = null;
         clientVerification.verifyClientIdAndClientSecret(clientId, clientSecret);
     }
 
-    @Test(expected = InvalidClientIdAndClientSecretException.class)
+    @Test
     public void shouldBeThrowInvalidClientIdAndClientSecretException_whenClientIdAndClientSecretIsEmptyString() {
+
+        exception.expect(InvalidClientIdAndClientSecretException.class);
+        exception.expectMessage("Required clientId and clientSecret.");
+
         String clientId = "";
         String clientSecret = "";
         clientVerification.verifyClientIdAndClientSecret(clientId, clientSecret);
     }
 
-    @Test(expected = InvalidClientIdAndClientSecretException.class)
+    @Test
     public void shouldBeThrowInvalidClientIdAndClientSecretException_whenNotFoundClientSecret() {
-        when(clientRepo.findClientSecretByClientId(any(String.class)))
+
+        exception.expect(InvalidClientIdAndClientSecretException.class);
+        exception.expectMessage("Empty clientSecret.");
+
+        when(clientService.findClientSecretByClientId(any(String.class)))
                 .thenReturn(null);
 
         String clientId = "123456";
@@ -54,9 +71,13 @@ public class ClientVerification_verifyClientIdAndClientSecretTest {
         clientVerification.verifyClientIdAndClientSecret(clientId, clientSecret);
     }
 
-    @Test(expected = InvalidClientIdAndClientSecretException.class)
+    @Test
     public void shouldBeThrowInvalidClientIdAndClientSecretException_whenInvalidClientSecret() {
-        when(clientRepo.findClientSecretByClientId(any(String.class)))
+
+        exception.expect(InvalidClientIdAndClientSecretException.class);
+        exception.expectMessage("Invalid clientSecret.");
+
+        when(clientService.findClientSecretByClientId(any(String.class)))
                 .thenReturn("password");
 
         String clientId = "123456";
@@ -66,7 +87,7 @@ public class ClientVerification_verifyClientIdAndClientSecretTest {
 
     @Test
     public void shouldBeOk_whenValidClientSecret() {
-        when(clientRepo.findClientSecretByClientId(any(String.class)))
+        when(clientService.findClientSecretByClientId(any(String.class)))
                 .thenReturn("password");
 
         String clientId = "123456";

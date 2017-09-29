@@ -4,7 +4,9 @@
 package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.exception.InvalidClientIdAndRedirectUriException;
+import com.pamarin.oauth2.exception.InvalidClientIdException;
 import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,6 +60,20 @@ public class ClientVerification_verifyClientIdAndRedirectUriTest {
     }
 
     @Test
+    public void shouldBeThrowInvalidClientIdException_whenEmptyAllowDomains() {
+
+        exception.expect(InvalidClientIdException.class);
+        exception.expectMessage("Empty allow domains.");
+
+        when(allowDomainService.findDomainByClientId(any(String.class)))
+                .thenReturn(Collections.emptyList());
+
+        String clientId = "123456";
+        String redirectUri = "https://google.com";
+        clientVerification.verifyClientIdAndRedirectUri(clientId, redirectUri);
+    }
+
+    @Test
     public void shouldBeThrowInvalidClientIdAndRedirectUriException_whenInvalidRedirectUri() {
 
         exception.expect(InvalidClientIdAndRedirectUriException.class);
@@ -87,7 +103,7 @@ public class ClientVerification_verifyClientIdAndRedirectUriTest {
 
     @Test
     public void shouldBeOk_whenValidRedirectUri() {
-        
+
         when(allowDomainService.findDomainByClientId(any(String.class)))
                 .thenReturn(Arrays.asList(
                         "https://pamarin.com",

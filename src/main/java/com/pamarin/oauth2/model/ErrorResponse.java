@@ -111,7 +111,7 @@ public class ErrorResponse {
             response.sendRedirect(makeRedirectUri(uri));
         } else {
             response.setContentType("text/html");
-            response.getWriter().print(getErrorDescription());
+            response.getWriter().print(getError());
         }
     }
 

@@ -5,6 +5,7 @@ package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.exception.InvalidClientIdAndClientSecretException;
 import com.pamarin.oauth2.exception.InvalidClientIdAndRedirectUriException;
+import com.pamarin.oauth2.exception.InvalidClientIdException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class ClientVerification_verifyClientIdAndClientSecretTest {
     @Test
     public void shouldBeThrowInvalidClientIdAndClientSecretException_whenNotFoundClientSecret() {
 
-        exception.expect(InvalidClientIdAndClientSecretException.class);
+        exception.expect(InvalidClientIdException.class);
         exception.expectMessage("Empty clientSecret.");
 
         when(clientService.findClientSecretByClientId(any(String.class)))

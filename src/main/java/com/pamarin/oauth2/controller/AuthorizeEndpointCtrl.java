@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,6 +69,13 @@ public class AuthorizeEndpointCtrl {
                 .setState(state)
                 .build()
         ));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UnsatisfiedServletRequestParameterException.class)
+    public void unsupportedResponseType(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ErrorResponse.unsupportedResponseType()
+                .returnError(request, response);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

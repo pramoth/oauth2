@@ -5,9 +5,11 @@ package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.exception.InvalidClientIdAndClientSecretException;
 import com.pamarin.oauth2.exception.InvalidClientIdAndRedirectUriException;
+import com.pamarin.oauth2.exception.InvalidClientIdException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -36,6 +38,10 @@ public class ClientVerificationImpl implements ClientVerification {
         }
 
         List<String> domains = allowDomainService.findDomainByClientId(clientId);
+        if (isEmpty(domains)) {
+            throw new InvalidClientIdException(clientId, "Empty allow domains.");
+        }
+
         for (String domain : domains) {
             if (redirectUri.startsWith(domain)) {
                 return;
@@ -62,11 +68,7 @@ public class ClientVerificationImpl implements ClientVerification {
 
         String secret = clientService.findClientSecretByClientId(clientId);
         if (!hasText(secret)) {
-            throw new InvalidClientIdAndClientSecretException(
-                    clientId,
-                    clientSecret,
-                    "Empty clientSecret."
-            );
+            throw new InvalidClientIdException(clientId, "Empty clientSecret.");
         }
 
         if (!secret.equals(clientSecret)) {

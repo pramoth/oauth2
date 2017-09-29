@@ -11,7 +11,8 @@ public class InvalidClientIdException extends RuntimeException {
 
     private final String clientId;
 
-    public InvalidClientIdException(String clientId) {
+    public InvalidClientIdException(String clientId, String message) {
+        super(message);
         this.clientId = clientId;
     }
 

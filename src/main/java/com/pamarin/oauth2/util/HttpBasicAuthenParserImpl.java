@@ -48,8 +48,8 @@ public class HttpBasicAuthenParserImpl implements HttpBasicAuthenParser {
 
         String decoded = new String(bytes, Charset.forName("utf-8"));
         String[] split = StringUtils.split(decoded, ":");
-        if (split == null || split.length < 2) {
-            throw new InvalidHttpBasicAuthenException("Invalid Credential value (Don't have semicolon between username/password).");
+        if (split == null || split.length != 2) {
+            throw new InvalidHttpBasicAuthenException("Invalid Credential value (Invalid basic authen format).");
         }
 
         return new Output(split[0], split[1]);

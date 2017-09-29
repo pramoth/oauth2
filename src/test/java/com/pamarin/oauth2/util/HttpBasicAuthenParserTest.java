@@ -86,7 +86,7 @@ public class HttpBasicAuthenParserTest {
     public void shouldBeInvalidCredentialValue_whenInputIsBasicMTIzNA() {
 
         exception.expect(InvalidHttpBasicAuthenException.class);
-        exception.expectMessage("Invalid Credential value (Don't have semicolon between username/password).");
+        exception.expectMessage("Invalid Credential value (Invalid basic authen format).");
 
         String input = "Basic MTIzNA==";
         Output output = parser.parse(input);

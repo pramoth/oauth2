@@ -30,6 +30,9 @@ public class AuthorizationService_authorizeWasLoginTest {
     private ResponseTypeValidator responseTypeValidator;
 
     @Mock
+    private ScopeVerification scopeVerification;
+
+    @Mock
     private ClientVerification clientVerification;
 
     @Mock

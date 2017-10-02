@@ -25,6 +25,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private ClientVerification clientVerification;
 
     @Autowired
+    private ScopeVerification scopeVerification;
+
+    @Autowired
     private LoginSession loginSession;
 
     @Autowired
@@ -44,6 +47,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         }
 
         clientVerification.verifyClientIdAndRedirectUri(authReq.getClientId(), authReq.getRedirectUri());
+        scopeVerification.verifyByClientIdAndScope(authReq.getClientId(), authReq.getScope());
         if (loginSession.wasCreated()) {
             return obtainingAuthorization(authReq);
         } else {

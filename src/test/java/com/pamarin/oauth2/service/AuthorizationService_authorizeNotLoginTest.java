@@ -25,6 +25,9 @@ public class AuthorizationService_authorizeNotLoginTest {
 
     @Mock
     private ResponseTypeValidator responseTypeValidator;
+    
+    @Mock
+    private ScopeVerification scopeVerification;
 
     @Mock
     private ClientVerification clientVerification;

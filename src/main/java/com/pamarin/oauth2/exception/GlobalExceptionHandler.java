@@ -36,8 +36,15 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidClientIdException.class)
-    public void invalidClient(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void invalidClient(InvalidClientIdException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
         ErrorResponse.invalidClient()
+                .returnError(request, response);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidScopeException.class)
+    public void invalidScope(InvalidScopeException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ErrorResponse.invalidScope()
                 .returnError(request, response);
     }
 

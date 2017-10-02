@@ -5,6 +5,7 @@ package com.pamarin.oauth2.controller;
 
 import com.pamarin.oauth2.exception.InvalidClientIdException;
 import com.pamarin.oauth2.exception.InvalidResponseTypeException;
+import com.pamarin.oauth2.exception.InvalidScopeException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.service.AuthorizationService;
 import org.junit.Test;
@@ -55,8 +56,8 @@ public class AuthorizeEndpointCtrlTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("invalid_request"));
     }
-    
-        @Test
+
+    @Test
     public void shouldBeErrorUnsupportedResponseType_whenResponseTypeIsAAA() throws Exception {
         when(authorizationService.authorize(any(AuthorizationRequest.class)))
                 .thenThrow(InvalidResponseTypeException.class);
@@ -81,7 +82,16 @@ public class AuthorizeEndpointCtrlTest {
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("http://localhost/callback?error=invalid_client"));
     }
-    
+
+    @Test
+    public void shouldBeErrorInvalidScope_whenThrowInvalidScopeException() throws Exception {
+        when(authorizationService.authorize(any(AuthorizationRequest.class)))
+                .thenThrow(InvalidScopeException.class);
+        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback&scope=AAA"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost/callback?error=invalid_scope"));
+    }
+
     @Test
     public void shouldBeErrorServerError_whenThrowException() throws Exception {
         when(authorizationService.authorize(any(AuthorizationRequest.class)))

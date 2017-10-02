@@ -41,4 +41,11 @@ public class GlobalExceptionHandler {
                 .returnError(request, response);
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public void serverError(Exception ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ErrorResponse.serverError()
+                .returnError(request, response);
+    }
+
 }

@@ -37,8 +37,6 @@ public class AuthorizeEndpointCtrlTest {
 
     @Test
     public void shouldBeErrorInvalidRequest_whenEmptyParameter() throws Exception {
-        when(authorizationService.authorize(any(AuthorizationRequest.class)))
-                .thenThrow(InvalidResponseTypeException.class);
         this.mockMvc.perform(get("/api/v1/oauth/authorize"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("invalid_request"));
@@ -82,5 +80,14 @@ public class AuthorizeEndpointCtrlTest {
         this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("http://localhost/callback?error=invalid_client"));
+    }
+    
+    @Test
+    public void shouldBeErrorServerError_whenThrowException() throws Exception {
+        when(authorizationService.authorize(any(AuthorizationRequest.class)))
+                .thenThrow(Exception.class);
+        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost/callback?error=server_error"));
     }
 }

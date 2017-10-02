@@ -7,6 +7,7 @@ import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationResponse;
+import com.pamarin.oauth2.validator.ResponseTypeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
+
+    @Autowired
+    private ResponseTypeValidator responseTypeValidator;
 
     @Autowired
     private ClientVerification clientVerification;
@@ -35,6 +39,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public String authorize(AuthorizationRequest authReq) {
+        if (!responseTypeValidator.isValid(authReq.getResponseType())) {
+            throw new InvalidResponseTypeException(authReq.getResponseType(), "Invalid responseType.");
+        }
+
         clientVerification.verifyClientIdAndRedirectUri(authReq.getClientId(), authReq.getRedirectUri());
         if (loginSession.wasCreated()) {
             return obtainingAuthorization(authReq);
@@ -52,7 +60,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             return generateAccessToken(authReq);
         }
 
-        throw new InvalidResponseTypeException(authReq.getResponseType());
+        throw new InvalidResponseTypeException(authReq.getResponseType(), "Invalid response_type = " + authReq.getResponseType());
     }
 
     //https://tools.ietf.org/html/rfc6749#section-4.1.2

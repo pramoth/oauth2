@@ -11,7 +11,8 @@ public class InvalidResponseTypeException extends RuntimeException {
 
     private final String responseType;
 
-    public InvalidResponseTypeException(String responseType) {
+    public InvalidResponseTypeException(String responseType, String message) {
+        super(message);
         this.responseType = responseType;
     }
 

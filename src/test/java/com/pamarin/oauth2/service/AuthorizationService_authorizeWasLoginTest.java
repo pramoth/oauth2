@@ -7,6 +7,7 @@ import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AuthorizationResponse;
+import com.pamarin.oauth2.validator.ResponseTypeValidator;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +27,9 @@ public class AuthorizationService_authorizeWasLoginTest {
     private AuthorizationServiceImpl authorizationService;
 
     @Mock
+    private ResponseTypeValidator responseTypeValidator;
+
+    @Mock
     private ClientVerification clientVerification;
 
     @Mock
@@ -40,6 +44,7 @@ public class AuthorizationService_authorizeWasLoginTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+        when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
     }
 
     @Test(expected = InvalidResponseTypeException.class)

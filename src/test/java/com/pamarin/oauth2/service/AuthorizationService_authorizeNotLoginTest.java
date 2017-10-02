@@ -4,10 +4,12 @@
 package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.model.AuthorizationRequest;
+import com.pamarin.oauth2.validator.ResponseTypeValidator;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import static org.mockito.Matchers.any;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
@@ -22,6 +24,9 @@ public class AuthorizationService_authorizeNotLoginTest {
     private AuthorizationServiceImpl authorizationService;
 
     @Mock
+    private ResponseTypeValidator responseTypeValidator;
+
+    @Mock
     private ClientVerification clientVerification;
 
     @Mock
@@ -30,6 +35,7 @@ public class AuthorizationService_authorizeNotLoginTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+        when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
     }
 
     @Test

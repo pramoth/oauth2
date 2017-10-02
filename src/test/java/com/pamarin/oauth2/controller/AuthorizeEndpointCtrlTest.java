@@ -4,16 +4,12 @@
 package com.pamarin.oauth2.controller;
 
 import com.pamarin.oauth2.exception.InvalidClientIdException;
+import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.service.AuthorizationService;
-import com.pamarin.oauth2.service.AuthorizationServiceImpl;
-import com.pamarin.oauth2.service.ClientVerification;
-import com.pamarin.oauth2.service.LoginSession;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import static org.mockito.Matchers.any;
-import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -21,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,28 +36,43 @@ public class AuthorizeEndpointCtrlTest {
     private AuthorizationService authorizationService;
 
     @Test
-    public void shouldBeError400_whenEmptyParameter() throws Exception {
+    public void shouldBeErrorInvalidRequest_whenEmptyParameter() throws Exception {
+        when(authorizationService.authorize(any(AuthorizationRequest.class)))
+                .thenThrow(InvalidResponseTypeException.class);
         this.mockMvc.perform(get("/api/v1/oauth/authorize"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("invalid_request"));
     }
 
     @Test
-    public void shouldBeError400_whenInvalidParameter1() throws Exception {
+    public void shouldBeErrorInvalidRequest_whenInvalidParameter1() throws Exception {
         this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("invalid_request"));
     }
 
     @Test
-    public void shouldBeError400_whenInvalidParameter2() throws Exception {
+    public void shouldBeErrorInvalidRequest_whenInvalidParameter2() throws Exception {
         this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("invalid_request"));
+    }
+    
+        @Test
+    public void shouldBeErrorUnsupportedResponseType_whenResponseTypeIsAAA() throws Exception {
+        when(authorizationService.authorize(any(AuthorizationRequest.class)))
+                .thenThrow(InvalidResponseTypeException.class);
+        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=AAA&client_id=123456&redirect_uri=http://localhost/callback"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost/callback?error=unsupported_response_type"));
     }
 
     @Test
     public void shouldBeRedirect2Login_whenNotLogin() throws Exception {
-        when(authorizationService.authorize(any(AuthorizationRequest.class))).thenReturn("response_type=code&client_id=123456&redirect_uri=http://localhost/callback");
+        when(authorizationService.authorize(any(AuthorizationRequest.class))).thenReturn("/login?response_type=code&client_id=123456&redirect_uri=http://localhost/callback");
         this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
-                .andExpect(status().isFound());
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/login?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"));
     }
 
     @Test

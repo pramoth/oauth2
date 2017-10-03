@@ -4,6 +4,7 @@
 package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.exception.InvalidScopeException;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -19,6 +20,11 @@ public class ScopeVerificationImpl implements ScopeVerification {
         boolean isValid = hasText(clientId) && hasText(scope);
         if(!isValid){
             throw new InvalidScopeException(scope, "Required clientId and scope.");
+        }
+        
+        String[] arr = StringUtils.split(scope, ",");
+        if(arr == null || arr.length < 1){
+            throw new InvalidScopeException(scope, "Invalid scope format.");
         }
     }
 

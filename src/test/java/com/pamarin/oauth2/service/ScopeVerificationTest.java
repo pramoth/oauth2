@@ -54,4 +54,14 @@ public class ScopeVerificationTest {
 
     }
 
+    @Test
+    public void shouldBeOk_whenValidScope() {
+        
+        String clientId = "123456";
+        String scope = "read";
+
+        scopeVerification.verifyByClientIdAndScope(clientId, scope);
+
+    }
+
 }

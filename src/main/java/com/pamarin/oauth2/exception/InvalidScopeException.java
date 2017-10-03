@@ -11,7 +11,8 @@ public class InvalidScopeException extends RuntimeException {
 
     private final String scope;
 
-    public InvalidScopeException(String scope) {
+    public InvalidScopeException(String scope, String message) {
+        super(message);
         this.scope = scope;
     }
 

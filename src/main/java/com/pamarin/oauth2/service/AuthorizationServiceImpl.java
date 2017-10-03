@@ -60,11 +60,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             return generateAuthorizationCode(authReq);
         }
 
-        if (authReq.responseTypeIsToken()) {
-            return generateAccessToken(authReq);
-        }
-
-        throw new InvalidResponseTypeException(authReq.getResponseType(), "Invalid response_type = " + authReq.getResponseType());
+        return generateAccessToken(authReq);
     }
 
     //https://tools.ietf.org/html/rfc6749#section-4.1.2

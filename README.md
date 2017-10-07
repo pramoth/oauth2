@@ -9,7 +9,7 @@ OAuth 2.0
 
 Implement ตาม spec `RFC6749` : https://tools.ietf.org/html/rfc6749
 
-> OAuth 2.0 (Open Authentication version 2.0) เป็น Framework/วิธีการ ที่อนุญาตให้ Application ใดๆ (Third-Party Application) สามารถเข้าถึงข้อมูล/ทรัพยากรของผู้ใช้งานระบบ (Resource Owner) จาก Application หนึ่ง ผ่าน Http Service ด้วยการอนุญาตจากเจ้าของทรัพยากรนั้น  
+> OAuth 2.0 (Open Authentication version 2.0) เป็น Framework/วิธีการ ที่อนุญาตให้ Application ใดๆ (Third-Party Application) สามารถเข้าถึงข้อมูล/ทรัพยากรของผู้ใช้งานระบบ (Resource Owner) ของ Application หนึ่ง ผ่าน Http Service ด้วยการอนุญาตจากเจ้าของทรัพยากรนั้น  
 
 ### Requires
 - Java 8

@@ -38,6 +38,12 @@ public class ScopeVerificationImpl implements ScopeVerification {
         if (isEmpty(scopes)) {
             throw new InvalidClientIdException(clientId, "Empty scopes.");
         }
+
+        for (String s : arr) {
+            if (!scopes.contains(s)) {
+                throw new InvalidScopeException(s, "Invalid scope \"" + s + "\", it's not in [\"" + StringUtils.join(scopes, "\", \"") + "\"].");
+            }
+        }
     }
 
 }

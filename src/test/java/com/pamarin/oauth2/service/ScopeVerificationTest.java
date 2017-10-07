@@ -28,7 +28,7 @@ public class ScopeVerificationTest {
 
     @InjectMocks
     private ScopeVerificationImpl scopeVerification;
-    
+
     @Mock
     private ScopeService scopeService;
 
@@ -62,13 +62,29 @@ public class ScopeVerificationTest {
         scopeVerification.verifyByClientIdAndScope(clientId, scope);
 
     }
-    
+
+    @Test
+    public void shouldBeThrowInvalidScopeException_whenScopeNotInList() {
+
+        exception.expect(InvalidScopeException.class);
+        exception.expectMessage("Invalid scope \"delete\", it's not in [\"read\", \"write\", \"execute\"].");
+
+        when(scopeService.findByClientId(any(String.class)))
+                .thenReturn(Arrays.asList("read", "write", "execute"));
+
+        String clientId = "123456";
+        String scope = "delete";
+
+        scopeVerification.verifyByClientIdAndScope(clientId, scope);
+
+    }
+
     @Test
     public void shouldBeThrowInvalidClientIdException_whenEmptyScopes() {
 
         exception.expect(InvalidClientIdException.class);
         exception.expectMessage("Empty scopes.");
-        
+
         when(scopeService.findByClientId(any(String.class)))
                 .thenReturn(Collections.emptyList());
 
@@ -83,7 +99,7 @@ public class ScopeVerificationTest {
     public void shouldBeOk_whenValidScope() {
         when(scopeService.findByClientId(any(String.class)))
                 .thenReturn(Arrays.asList("read"));
-        
+
         String clientId = "123456";
         String scope = "read";
 

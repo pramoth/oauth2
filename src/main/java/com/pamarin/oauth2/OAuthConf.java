@@ -13,6 +13,7 @@ import com.pamarin.oauth2.service.AccessTokenGenerator;
 import com.pamarin.oauth2.service.AllowDomainService;
 import com.pamarin.oauth2.service.AuthorizationCodeGenerator;
 import com.pamarin.oauth2.service.ClientService;
+import com.pamarin.oauth2.service.ScopeService;
 import com.pamarin.oauth2.service.ScopeVerification;
 import java.util.Arrays;
 import java.util.UUID;
@@ -25,6 +26,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class OAuthConf {
+    
+    @Bean ScopeService newScopeService(){
+        return (clientId) -> Arrays.asList("read");
+    }
 
     @Bean
     public ClientService newClientService() {

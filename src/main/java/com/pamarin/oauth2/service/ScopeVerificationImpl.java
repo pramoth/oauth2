@@ -3,9 +3,13 @@
  */
 package com.pamarin.oauth2.service;
 
+import com.pamarin.oauth2.exception.InvalidClientIdException;
 import com.pamarin.oauth2.exception.InvalidScopeException;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -15,16 +19,24 @@ import static org.springframework.util.StringUtils.hasText;
 @Service
 public class ScopeVerificationImpl implements ScopeVerification {
 
+    @Autowired
+    private ScopeService scopeService;
+
     @Override
     public void verifyByClientIdAndScope(String clientId, String scope) {
         boolean isValid = hasText(clientId) && hasText(scope);
-        if(!isValid){
+        if (!isValid) {
             throw new InvalidScopeException(scope, "Required clientId and scope.");
         }
-        
+
         String[] arr = StringUtils.split(scope, ",");
-        if(arr == null || arr.length < 1){
+        if (arr == null || arr.length < 1) {
             throw new InvalidScopeException(scope, "Invalid scope format.");
+        }
+
+        List<String> scopes = scopeService.findByClientId(clientId);
+        if (isEmpty(scopes)) {
+            throw new InvalidClientIdException(clientId, "Empty scopes.");
         }
     }
 

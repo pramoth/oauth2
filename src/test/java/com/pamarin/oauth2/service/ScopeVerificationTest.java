@@ -3,12 +3,18 @@
  */
 package com.pamarin.oauth2.service;
 
+import com.pamarin.oauth2.exception.InvalidClientIdException;
 import com.pamarin.oauth2.exception.InvalidScopeException;
+import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
+import static org.mockito.Matchers.any;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 
 /**
@@ -22,6 +28,9 @@ public class ScopeVerificationTest {
 
     @InjectMocks
     private ScopeVerificationImpl scopeVerification;
+    
+    @Mock
+    private ScopeService scopeService;
 
     @Before
     public void initMocks() {
@@ -53,9 +62,27 @@ public class ScopeVerificationTest {
         scopeVerification.verifyByClientIdAndScope(clientId, scope);
 
     }
+    
+    @Test
+    public void shouldBeThrowInvalidClientIdException_whenEmptyScopes() {
+
+        exception.expect(InvalidClientIdException.class);
+        exception.expectMessage("Empty scopes.");
+        
+        when(scopeService.findByClientId(any(String.class)))
+                .thenReturn(Collections.emptyList());
+
+        String clientId = "123456";
+        String scope = "read";
+
+        scopeVerification.verifyByClientIdAndScope(clientId, scope);
+
+    }
 
     @Test
     public void shouldBeOk_whenValidScope() {
+        when(scopeService.findByClientId(any(String.class)))
+                .thenReturn(Arrays.asList("read"));
         
         String clientId = "123456";
         String scope = "read";

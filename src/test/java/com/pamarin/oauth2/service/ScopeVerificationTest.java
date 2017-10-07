@@ -51,6 +51,32 @@ public class ScopeVerificationTest {
     }
 
     @Test
+    public void shouldBeThrowInvalidScopeException_whenInputIsNullOrEmptyString1() {
+
+        exception.expect(InvalidScopeException.class);
+        exception.expectMessage("Required clientId and scope.");
+
+        String clientId = null;
+        String scope = "";
+
+        scopeVerification.verifyByClientIdAndScope(clientId, scope);
+
+    }
+
+    @Test
+    public void shouldBeThrowInvalidScopeException_whenInputIsNullOrEmptyString2() {
+
+        exception.expect(InvalidScopeException.class);
+        exception.expectMessage("Required clientId and scope.");
+
+        String clientId = "";
+        String scope = null;
+
+        scopeVerification.verifyByClientIdAndScope(clientId, scope);
+
+    }
+
+    @Test
     public void shouldBeThrowInvalidScopeException_whenInputIsEmptyString() {
 
         exception.expect(InvalidScopeException.class);

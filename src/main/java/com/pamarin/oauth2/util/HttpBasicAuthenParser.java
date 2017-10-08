@@ -33,15 +33,10 @@ public interface HttpBasicAuthenParser {
         }
 
         @Override
-        public String toString() {
-            return "Output{" + "username=" + username + ", password=" + password + '}';
-        }
-
-        @Override
         public int hashCode() {
-            int hash = 3;
-            hash = 59 * hash + Objects.hashCode(this.username);
-            hash = 59 * hash + Objects.hashCode(this.password);
+            int hash = 5;
+            hash = 83 * hash + Objects.hashCode(this.username);
+            hash = 83 * hash + Objects.hashCode(this.password);
             return hash;
         }
 
@@ -60,12 +55,9 @@ public interface HttpBasicAuthenParser {
             if (!Objects.equals(this.username, other.username)) {
                 return false;
             }
-            if (!Objects.equals(this.password, other.password)) {
-                return false;
-            }
-            return true;
-        }
 
+            return Objects.equals(this.password, other.password);
+        }
     }
 
 }

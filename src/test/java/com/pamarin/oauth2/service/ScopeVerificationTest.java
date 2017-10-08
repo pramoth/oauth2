@@ -133,4 +133,16 @@ public class ScopeVerificationTest {
 
     }
 
+    @Test
+    public void shouldBeOk_whenValidMultipleScope() {
+        when(scopeService.findByClientId(any(String.class)))
+                .thenReturn(Arrays.asList("read", "write", "execute"));
+
+        String clientId = "123456";
+        String scope = "read,write";
+
+        scopeVerification.verifyByClientIdAndScope(clientId, scope);
+
+    }
+
 }

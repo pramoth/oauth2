@@ -29,16 +29,12 @@ public class ScopeVerificationImpl implements ScopeVerification {
             throw new InvalidScopeException(scope, "Required clientId and scope.");
         }
 
-        String[] arr = StringUtils.split(scope, ",");
-        if (arr == null || arr.length < 1) {
-            throw new InvalidScopeException(scope, "Invalid scope format.");
-        }
-
         List<String> scopes = scopeService.findByClientId(clientId);
         if (isEmpty(scopes)) {
             throw new InvalidClientIdException(clientId, "Empty scopes.");
         }
 
+        String[] arr = StringUtils.split(scope, ",");
         for (String s : arr) {
             if (!scopes.contains(s)) {
                 throw new InvalidScopeException(s, "Invalid scope \"" + s + "\", it's not in [\"" + StringUtils.join(scopes, "\", \"") + "\"].");

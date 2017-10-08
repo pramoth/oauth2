@@ -13,6 +13,7 @@ import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
+import org.springframework.stereotype.Component;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -30,6 +31,7 @@ public @interface ValidUri {
 
     Class<? extends Payload>[] payload() default {};
 
+    @Component
     public static class Validator implements ConstraintValidator<ValidUri, String> {
 
         @Override
@@ -49,6 +51,10 @@ public @interface ValidUri {
             } catch (MalformedURLException ex) {
                 return false;
             }
+        }
+
+        public boolean isValid(String uri) {
+            return isValid(uri, null);
         }
 
     }

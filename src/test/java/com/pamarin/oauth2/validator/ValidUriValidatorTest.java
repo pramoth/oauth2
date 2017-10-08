@@ -53,6 +53,14 @@ public class ValidUriValidatorTest {
     }
 
     @Test
+    public void shouldBeFalse_whenInvalidInput3() {
+        String input = "/callback";
+        boolean output = validator.isValid(input, null);
+        boolean expected = false;
+        assertThat(output).isEqualTo(expected);
+    }
+
+    @Test
     public void shouldBeTrue_whenValidInput1() {
         String input = "http://127.0.0.1";
         boolean output = validator.isValid(input, null);

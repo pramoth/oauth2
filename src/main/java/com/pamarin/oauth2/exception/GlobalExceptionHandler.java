@@ -43,6 +43,14 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidRedirectUriException.class)
+    public void invalidRequest(InvalidRedirectUriException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ErrorResponse err = ErrorResponse.invalidRequest();
+        err.setErrorDescription("Invalid format '" + ex.getRedirectUri() + "'.");
+        err.returnError(request, response);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public void invalidRequest(MissingServletRequestParameterException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
         ErrorResponse err = ErrorResponse.invalidRequest();

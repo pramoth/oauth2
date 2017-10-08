@@ -6,6 +6,8 @@ package com.pamarin.oauth2.service;
 import com.pamarin.oauth2.exception.InvalidClientIdAndClientSecretException;
 import com.pamarin.oauth2.exception.InvalidClientIdAndRedirectUriException;
 import com.pamarin.oauth2.exception.InvalidClientIdException;
+import com.pamarin.oauth2.exception.InvalidRedirectUriException;
+import com.pamarin.oauth2.validator.ValidUri;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,9 @@ public class ClientVerificationImpl implements ClientVerification {
     @Autowired
     private AllowDomainService allowDomainService;
 
+    @Autowired
+    private ValidUri.Validator validUriValidator;
+
     @Override
     public void verifyClientIdAndRedirectUri(String clientId, String redirectUri) {
         boolean isValid = hasText(clientId) && hasText(redirectUri);
@@ -35,6 +40,10 @@ public class ClientVerificationImpl implements ClientVerification {
                     redirectUri,
                     "Required clientId and redirectUri."
             );
+        }
+
+        if (!validUriValidator.isValid(redirectUri)) {
+            throw new InvalidRedirectUriException(redirectUri, "Invalid redirect uri.");
         }
 
         List<String> domains = allowDomainService.findDomainByClientId(clientId);

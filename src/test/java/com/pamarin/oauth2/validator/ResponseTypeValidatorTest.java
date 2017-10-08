@@ -18,11 +18,11 @@ public class ResponseTypeValidatorTest {
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
-    private ResponseTypeValidator validator;
+    private ResponseType.Validator validator;
 
     @Before
     public void before() {
-        validator = new ResponseTypeValidatorImpl();
+        validator = new ResponseType.Validator();
     }
 
     @Test

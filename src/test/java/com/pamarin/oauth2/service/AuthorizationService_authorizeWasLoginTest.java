@@ -7,8 +7,6 @@ import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AuthorizationResponse;
-import com.pamarin.oauth2.validator.ResponseTypeValidator;
-import com.pamarin.oauth2.validator.ResponseTypeValidatorImpl;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +15,7 @@ import static org.mockito.Matchers.any;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import com.pamarin.oauth2.validator.ResponseType;
 
 /**
  * @author jittagornp <http://jittagornp.me>
@@ -28,7 +27,7 @@ public class AuthorizationService_authorizeWasLoginTest {
     private AuthorizationServiceImpl authorizationService;
 
     @Mock
-    private ResponseTypeValidator responseTypeValidator;
+    private ResponseType.Validator responseTypeValidator;
 
     @Mock
     private ScopeVerification scopeVerification;

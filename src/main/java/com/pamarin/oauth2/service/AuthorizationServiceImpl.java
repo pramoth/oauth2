@@ -7,9 +7,9 @@ import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationResponse;
-import com.pamarin.oauth2.validator.ResponseTypeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.pamarin.oauth2.validator.ResponseType;
 
 /**
  * @author jittagornp <http://jittagornp.me>
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Autowired
-    private ResponseTypeValidator responseTypeValidator;
+    private ResponseType.Validator responseTypeValidator;
 
     @Autowired
     private ClientVerification clientVerification;

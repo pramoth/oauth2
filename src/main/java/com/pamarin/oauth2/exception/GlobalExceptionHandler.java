@@ -5,13 +5,17 @@ package com.pamarin.oauth2.exception;
 
 import com.pamarin.oauth2.model.ErrorResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -39,6 +43,14 @@ public class GlobalExceptionHandler {
         } else {
             err.setErrorDescription(ex.getMessage());
         }
+        err.returnError(request, response);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UnsatisfiedServletRequestParameterException.class)
+    public void invalidRequest(UnsatisfiedServletRequestParameterException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ErrorResponse err = ErrorResponse.invalidRequest();
+        err.setErrorDescription("Require parameter '" + ex.getParamConditionGroups().stream().map(m -> StringUtils.join(m, ",")).sorted().collect(Collectors.joining(" or ")) + "'.");
         err.returnError(request, response);
     }
 

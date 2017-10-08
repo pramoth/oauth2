@@ -5,10 +5,12 @@ package com.pamarin.oauth2.controller;
 
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.CodeAccessTokenRequest;
+import com.pamarin.oauth2.model.RefreshAccessTokenRequest;
 import com.pamarin.oauth2.service.AccessTokenGenerator;
 import com.pamarin.oauth2.util.HttpBasicAuthenParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +32,7 @@ public class TokenEndpointCtrl {
     @ResponseBody
     @PostMapping(
             value = "/api/v1/oauth/token",
+            params = "grant_type=authorization_code",
             consumes = "application/x-www-form-urlencoded",
             produces = "application/json"
     )
@@ -38,12 +41,35 @@ public class TokenEndpointCtrl {
             @RequestParam("grant_type") String grantType,
             @RequestParam("code") String code,
             @RequestParam("redirect_uri") String redirectUri
-    ) {
+    ) throws MissingServletRequestParameterException {
         HttpBasicAuthenParser.Output basicAuthen = httpBasicAuthenParser.parse(authorization);
         return accessTokenGenerator.generate(new CodeAccessTokenRequest.Builder()
                 .setClientId(basicAuthen.getUsername())
                 .setClientSecret(basicAuthen.getPassword())
                 .setCode(code)
+                .setGrantType(grantType)
+                .setRedirectUri(redirectUri)
+                .build());
+    }
+
+    @ResponseBody
+    @PostMapping(
+            value = "/api/v1/oauth/token",
+            params = "grant_type=refresh_token",
+            consumes = "application/x-www-form-urlencoded",
+            produces = "application/json"
+    )
+    public AccessTokenResponse getTokenByRefreshToken(
+            @RequestHeader("Authorization") String authorization,
+            @RequestParam("grant_type") String grantType,
+            @RequestParam("refresh_token") String refreshToken,
+            @RequestParam("redirect_uri") String redirectUri
+    ) throws MissingServletRequestParameterException {
+        HttpBasicAuthenParser.Output basicAuthen = httpBasicAuthenParser.parse(authorization);
+        return accessTokenGenerator.generate(new RefreshAccessTokenRequest.Builder()
+                .setClientId(basicAuthen.getUsername())
+                .setClientSecret(basicAuthen.getPassword())
+                .setRefreshToken(refreshToken)
                 .setGrantType(grantType)
                 .setRedirectUri(redirectUri)
                 .build());

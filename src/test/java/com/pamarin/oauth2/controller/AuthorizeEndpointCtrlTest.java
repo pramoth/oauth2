@@ -4,6 +4,7 @@
 package com.pamarin.oauth2.controller;
 
 import com.pamarin.oauth2.exception.InvalidClientIdException;
+import com.pamarin.oauth2.exception.InvalidRedirectUriException;
 import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.exception.InvalidScopeException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
@@ -64,6 +65,15 @@ public class AuthorizeEndpointCtrlTest {
         this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=AAA&client_id=123456&redirect_uri=http://localhost/callback"))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("http://localhost/callback?error=unsupported_response_type"));
+    }
+
+    @Test
+    public void shouldBeErrorInvalidRequest_whenRedirectUriIsCallback() throws Exception {
+        when(authorizationService.authorize(any(AuthorizationRequest.class)))
+                .thenThrow(new InvalidRedirectUriException("/callback", "Invalid redirect_uri."));
+        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=AAA&client_id=123456&redirect_uri=/callback"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("invalid_request"));
     }
 
     @Test

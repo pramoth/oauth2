@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pamarin.oauth2.validator.ValidUri;
 import java.io.IOException;
 import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,8 @@ import static org.springframework.util.StringUtils.hasText;
 public class ErrorResponse {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErrorResponse.class);
+    
+    private final ValidUri.Validator validUriValidator = new ValidUri.Validator();
 
     private String error;
 
@@ -119,7 +122,7 @@ public class ErrorResponse {
 
     public void returnError(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String uri = request.getParameter("redirect_uri");
-        if (hasText(uri)) {
+        if (hasText(uri) && validUriValidator.isValid(uri)) {
             response.sendRedirect(makeRedirectUri(uri));
         } else {
             writeErrorBody(request, response);

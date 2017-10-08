@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -30,24 +31,38 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ServletRequestBindingException.class)
+    public void invalidRequest(ServletRequestBindingException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ErrorResponse err = ErrorResponse.invalidRequest();
+        if (ex.getMessage().startsWith("Missing request header 'Authorization'")) {
+            err.setErrorDescription("Require header 'Authorization' as http basic.");
+        } else {
+            err.setErrorDescription(ex.getMessage());
+        }
+        err.returnError(request, response);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public void invalidRequest(MissingServletRequestParameterException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ErrorResponse.invalidRequest()
-                .returnError(request, response);
+        ErrorResponse err = ErrorResponse.invalidRequest();
+        err.setErrorDescription("Require parameter " + ex.getParameterName() + " (" + ex.getParameterType() + ").");
+        err.returnError(request, response);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public void invalidRequest(HttpMediaTypeNotSupportedException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ErrorResponse.invalidRequest()
-                .returnError(request, response);
+        ErrorResponse err = ErrorResponse.invalidRequest();
+        err.setErrorDescription("Not support media type '" + ex.getContentType() + "'.");
+        err.returnError(request, response);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public void invalidRequest(HttpRequestMethodNotSupportedException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
         ErrorResponse err = ErrorResponse.invalidRequest();
-        err.setErrorDescription("Not support http " + ex.getMethod());
+        err.setErrorDescription("Not support http '" + ex.getMethod() + "'.");
         err.returnError(request, response);
     }
 

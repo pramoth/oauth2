@@ -48,34 +48,41 @@ public class TokenEndpointCtrlTest {
                 .andExpect(content().string("{\"error\":\"invalid_grant\",\"error_description\":\"Require parameter 'grant_type=authorization_code or grant_type=refresh_token'.\"}"));
     }
 
-//    @Test
-//    public void shouldBeErrorInvalidRequest_whenEmptyGrantTypeParameter() throws Exception {
-//        this.mockMvc.perform(
-//                post("/api/v1/oauth/token")
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                        .with(httpBasic("test", "password"))
-//        )
-//                .andExpect(status().isBadRequest())
-//                .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter grant_type (String).\"}"));
-//    }
-
     @Test
     public void shouldBeErrorInvalidRequest_whenEmptyCodeParameter() throws Exception {
         this.mockMvc.perform(
                 post("/api/v1/oauth/token?grant_type=authorization_code")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .with(httpBasic("test", "password"))
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter code (String).\"}"));
     }
 
     @Test
-    public void shouldBeErrorInvalidRequest_whenEmptyRedirectUriParameter() throws Exception {
+    public void shouldBeErrorInvalidRequest_whenHasCodeButEmptyRedirectUriParameter() throws Exception {
         this.mockMvc.perform(
                 post("/api/v1/oauth/token?grant_type=authorization_code&code=XXX")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .with(httpBasic("test", "password"))
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter redirect_uri (String).\"}"));
+    }
+
+    @Test
+    public void shouldBeErrorInvalidRequest_whenEmptyRefreshTokenParameter() throws Exception {
+        this.mockMvc.perform(
+                post("/api/v1/oauth/token?grant_type=refresh_token")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter refresh_token (String).\"}"));
+    }
+
+    @Test
+    public void shouldBeErrorInvalidRequest_whenHasRefreshTokenButEmptyRedirectUriParameter() throws Exception {
+        this.mockMvc.perform(
+                post("/api/v1/oauth/token?grant_type=refresh_token&refresh_token=XXX")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter redirect_uri (String).\"}"));

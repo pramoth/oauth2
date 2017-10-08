@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 /**
  * @author jittagornp <http://jittagornp.me>
@@ -25,7 +26,7 @@ public class TokenEndpointCtrlTest {
 
     @Autowired
     private MockMvc mockMvc;
-    
+
     @Test
     public void shouldBeErrorInvalidRequest_whenExchangeByHttpGet() throws Exception {
         this.mockMvc.perform(get("/api/v1/oauth/token"))
@@ -39,12 +40,23 @@ public class TokenEndpointCtrlTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Not support media type 'null'.\"}"));
     }
-    
+
     @Test
     public void shouldBeErrorInvalidRequest_whenEmptyParameters() throws Exception {
         this.mockMvc.perform(post("/api/v1/oauth/token").contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require header 'Authorization' as http basic.\"}"));
+    }
+
+    @Test
+    public void shouldBeErrorInvalidRequest_whenInvalidAuthorizationFormat() throws Exception {
+        this.mockMvc.perform(
+                post("/api/v1/oauth/token")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(httpBasic("test", "password"))
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter grant_type (String).\"}"));
     }
 
 }

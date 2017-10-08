@@ -49,10 +49,21 @@ public class TokenEndpointCtrlTest {
     }
 
     @Test
+    public void shouldBeErrorInvalidRequest_whenEmptyAuthorizationHeader() throws Exception {
+        this.mockMvc.perform(
+                post("/api/v1/oauth/token?grant_type=authorization_code")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require header 'Authorization' as http basic.\"}"));
+    }
+
+    @Test
     public void shouldBeErrorInvalidRequest_whenEmptyCodeParameter() throws Exception {
         this.mockMvc.perform(
                 post("/api/v1/oauth/token?grant_type=authorization_code")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(httpBasic("test", "password"))
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter code (String).\"}"));
@@ -63,6 +74,7 @@ public class TokenEndpointCtrlTest {
         this.mockMvc.perform(
                 post("/api/v1/oauth/token?grant_type=authorization_code&code=XXX")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(httpBasic("test", "password"))
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter redirect_uri (String).\"}"));
@@ -73,6 +85,7 @@ public class TokenEndpointCtrlTest {
         this.mockMvc.perform(
                 post("/api/v1/oauth/token?grant_type=refresh_token")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(httpBasic("test", "password"))
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter refresh_token (String).\"}"));
@@ -83,6 +96,7 @@ public class TokenEndpointCtrlTest {
         this.mockMvc.perform(
                 post("/api/v1/oauth/token?grant_type=refresh_token&refresh_token=XXX")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(httpBasic("test", "password"))
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter redirect_uri (String).\"}"));

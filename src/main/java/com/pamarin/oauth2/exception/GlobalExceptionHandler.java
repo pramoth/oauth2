@@ -49,8 +49,9 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UnsatisfiedServletRequestParameterException.class)
     public void invalidRequest(UnsatisfiedServletRequestParameterException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ErrorResponse err = ErrorResponse.invalidRequest();
-        err.setErrorDescription("Require parameter '" + ex.getParamConditionGroups().stream().map(m -> StringUtils.join(m, ",")).sorted().collect(Collectors.joining(" or ")) + "'.");
+        String params = ex.getParamConditionGroups().stream().map(m -> StringUtils.join(m, ",")).sorted().collect(Collectors.joining(" or "));
+        ErrorResponse err = params.contains("grant_type") ? ErrorResponse.invalidGrant() : ErrorResponse.invalidRequest();
+        err.setErrorDescription("Require parameter '" + params + "'.");
         err.returnError(request, response);
     }
 

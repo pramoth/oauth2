@@ -45,7 +45,7 @@ public class TokenEndpointCtrlTest {
     public void shouldBeErrorInvalidRequest_whenEmptyGrantTypeParameter() throws Exception {
         this.mockMvc.perform(post("/api/v1/oauth/token").contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter 'grant_type=authorization_code or grant_type=refresh_token'.\"}"));
+                .andExpect(content().string("{\"error\":\"invalid_grant\",\"error_description\":\"Require parameter 'grant_type=authorization_code or grant_type=refresh_token'.\"}"));
     }
 
 //    @Test

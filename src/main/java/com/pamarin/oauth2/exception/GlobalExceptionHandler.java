@@ -46,8 +46,9 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public void invalidRequest(HttpRequestMethodNotSupportedException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ErrorResponse.invalidRequest()
-                .returnError(request, response);
+        ErrorResponse err = ErrorResponse.invalidRequest();
+        err.setErrorDescription("Not support http " + ex.getMethod());
+        err.returnError(request, response);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

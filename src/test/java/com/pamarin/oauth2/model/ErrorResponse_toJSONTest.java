@@ -3,6 +3,7 @@
  */
 package com.pamarin.oauth2.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
@@ -13,7 +14,7 @@ import org.junit.Test;
 public class ErrorResponse_toJSONTest {
 
     @Test
-    public void shouldBeErrorNull_whenAllAttributesIsNull() {
+    public void shouldBeErrorNull_whenAllAttributesIsNull() throws JsonProcessingException {
         ErrorResponse input = new ErrorResponse();
         String output = input.toJSON();
         String expected = "{\"error\":null}";
@@ -22,7 +23,7 @@ public class ErrorResponse_toJSONTest {
     }
 
     @Test
-    public void shouldBeOk_whenHasFullAttributes() {
+    public void shouldBeOk_whenHasFullAttributes() throws JsonProcessingException {
         ErrorResponse input = new ErrorResponse.Builder()
                 .setError("AAA")
                 .setErrorDescription("BBB")

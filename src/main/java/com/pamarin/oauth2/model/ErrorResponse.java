@@ -21,7 +21,7 @@ import static org.springframework.util.StringUtils.hasText;
  * create : 2017/09/26
  */
 public class ErrorResponse {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ErrorResponse.class);
 
     private String error;
@@ -57,14 +57,9 @@ public class ErrorResponse {
     public void setErrorUri(String errorUri) {
         this.errorUri = errorUri;
     }
-    
-    public String toJSON(){
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(this);
-        } catch (JsonProcessingException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+
+    public String toJSON() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(this);
     }
 
     public String buildQuerystring() {
@@ -127,17 +122,21 @@ public class ErrorResponse {
         if (hasText(uri)) {
             response.sendRedirect(makeRedirectUri(uri));
         } else {
-            if(isProduceJSON(request)){
-                response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-                response.getWriter().print(this.toJSON());
-            }else{
-                response.setContentType(MediaType.TEXT_HTML_VALUE);
-                response.getWriter().print(getError());
-            }
+            writeErrorBody(request, response);
         }
     }
-    
-    private boolean isProduceJSON(HttpServletRequest request){
+
+    private void writeErrorBody(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (isProduceJSON(request)) {
+            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+            response.getWriter().print(this.toJSON());
+        } else {
+            response.setContentType(MediaType.TEXT_HTML_VALUE);
+            response.getWriter().print(getError());
+        }
+    }
+
+    private boolean isProduceJSON(HttpServletRequest request) {
         return request.getRequestURI()
                 .endsWith("/oauth/token");
     }

@@ -23,7 +23,7 @@ public class ValidUriValidatorTest {
     @Test
     public void shouldBeTrue_whenInputIsNull() {
         String input = null;
-        boolean output = validator.isValid(input, null);
+        boolean output = validator.isValid(input);
         boolean expected = true;
         assertThat(output).isEqualTo(expected);
     }
@@ -31,7 +31,7 @@ public class ValidUriValidatorTest {
     @Test
     public void shouldBeTrue_whenInputIsEmptyString() {
         String input = "";
-        boolean output = validator.isValid(input, null);
+        boolean output = validator.isValid(input);
         boolean expected = true;
         assertThat(output).isEqualTo(expected);
     }
@@ -39,7 +39,7 @@ public class ValidUriValidatorTest {
     @Test
     public void shouldBeFalse_whenInvalidInput1() {
         String input = "AAAA";
-        boolean output = validator.isValid(input, null);
+        boolean output = validator.isValid(input);
         boolean expected = false;
         assertThat(output).isEqualTo(expected);
     }
@@ -47,7 +47,7 @@ public class ValidUriValidatorTest {
     @Test
     public void shouldBeFalse_whenInvalidInput2() {
         String input = "127.0.0.1";
-        boolean output = validator.isValid(input, null);
+        boolean output = validator.isValid(input);
         boolean expected = false;
         assertThat(output).isEqualTo(expected);
     }
@@ -55,7 +55,7 @@ public class ValidUriValidatorTest {
     @Test
     public void shouldBeFalse_whenInvalidInput3() {
         String input = "/callback";
-        boolean output = validator.isValid(input, null);
+        boolean output = validator.isValid(input);
         boolean expected = false;
         assertThat(output).isEqualTo(expected);
     }
@@ -63,7 +63,7 @@ public class ValidUriValidatorTest {
     @Test
     public void shouldBeTrue_whenValidInput1() {
         String input = "http://127.0.0.1";
-        boolean output = validator.isValid(input, null);
+        boolean output = validator.isValid(input);
         boolean expected = true;
         assertThat(output).isEqualTo(expected);
     }
@@ -71,7 +71,7 @@ public class ValidUriValidatorTest {
     @Test
     public void shouldBeTrue_whenValidInput2() {
         String input = "http://localhost:8000";
-        boolean output = validator.isValid(input, null);
+        boolean output = validator.isValid(input);
         boolean expected = true;
         assertThat(output).isEqualTo(expected);
     }
@@ -79,7 +79,7 @@ public class ValidUriValidatorTest {
     @Test
     public void shouldBeTrue_whenValidInput3() {
         String input = "https://pamarin.com/callback";
-        boolean output = validator.isValid(input, null);
+        boolean output = validator.isValid(input);
         boolean expected = true;
         assertThat(output).isEqualTo(expected);
     }

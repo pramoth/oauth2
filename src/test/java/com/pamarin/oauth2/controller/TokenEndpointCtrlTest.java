@@ -49,7 +49,7 @@ public class TokenEndpointCtrlTest {
     }
 
     @Test
-    public void shouldBeErrorInvalidRequest_whenInvalidAuthorizationFormat() throws Exception {
+    public void shouldBeErrorInvalidRequest_whenEmptyGrantTypeParameter() throws Exception {
         this.mockMvc.perform(
                 post("/api/v1/oauth/token")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -59,4 +59,35 @@ public class TokenEndpointCtrlTest {
                 .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter grant_type (String).\"}"));
     }
 
+    @Test
+    public void shouldBeErrorInvalidRequest_whenEmptyCodeParameter() throws Exception {
+        this.mockMvc.perform(
+                post("/api/v1/oauth/token?grant_type=code")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(httpBasic("test", "password"))
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter code (String).\"}"));
+    }
+
+    @Test
+    public void shouldBeErrorInvalidRequest_whenEmptyRedirectUriParameter() throws Exception {
+        this.mockMvc.perform(
+                post("/api/v1/oauth/token?grant_type=code&code=XXX")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(httpBasic("test", "password"))
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Require parameter redirect_uri (String).\"}"));
+    }
+
+    @Test
+    public void shouldBeOk() throws Exception {
+        this.mockMvc.perform(
+                post("/api/v1/oauth/token?grant_type=code&code=XXX&redirect_uri=AAA")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(httpBasic("test", "password"))
+        )
+                .andExpect(status().isOk());
+    }
 }

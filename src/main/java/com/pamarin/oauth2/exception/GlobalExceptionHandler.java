@@ -8,6 +8,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +32,20 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public void invalidRequest(MissingServletRequestParameterException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ErrorResponse.invalidRequest()
+                .returnError(request, response);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public void invalidRequest(HttpMediaTypeNotSupportedException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ErrorResponse.invalidRequest()
+                .returnError(request, response);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public void invalidRequest(HttpRequestMethodNotSupportedException ex, HttpServletRequest request, HttpServletResponse response) throws IOException {
         ErrorResponse.invalidRequest()
                 .returnError(request, response);
     }

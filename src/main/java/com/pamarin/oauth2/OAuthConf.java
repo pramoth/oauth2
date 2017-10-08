@@ -13,10 +13,11 @@ import com.pamarin.oauth2.service.AccessTokenGenerator;
 import com.pamarin.oauth2.service.AllowDomainService;
 import com.pamarin.oauth2.service.AuthorizationCodeGenerator;
 import com.pamarin.oauth2.service.ClientService;
+import com.pamarin.oauth2.service.ClientVerification;
 import com.pamarin.oauth2.service.ScopeService;
-import com.pamarin.oauth2.service.ScopeVerification;
 import java.util.Arrays;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,8 +27,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class OAuthConf {
-    
-    @Bean ScopeService newScopeService(){
+
+    @Bean
+    ScopeService newScopeService() {
         return (clientId) -> Arrays.asList("read");
     }
 
@@ -57,6 +59,9 @@ public class OAuthConf {
     public AccessTokenGenerator newAccessTokenGenerator() {
         return new AccessTokenGenerator() {
 
+            @Autowired
+            private ClientVerification clientVerification;
+
             private AccessTokenResponse newAccessTokenResponse() {
                 return new AccessTokenResponse.Builder()
                         .setAccessToken(UUID.randomUUID().toString())
@@ -73,11 +78,19 @@ public class OAuthConf {
 
             @Override
             public AccessTokenResponse generate(CodeAccessTokenRequest request) {
+                clientVerification.verifyClientIdAndClientSecret(
+                        request.getClientId(), 
+                        request.getClientSecret()
+                );
                 return newAccessTokenResponse();
             }
 
             @Override
             public AccessTokenResponse generate(RefreshAccessTokenRequest request) {
+                clientVerification.verifyClientIdAndClientSecret(
+                        request.getClientId(), 
+                        request.getClientSecret()
+                );
                 return newAccessTokenResponse();
             }
         };

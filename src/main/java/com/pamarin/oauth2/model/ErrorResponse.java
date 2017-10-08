@@ -5,9 +5,15 @@ package com.pamarin.oauth2.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -15,6 +21,8 @@ import static org.springframework.util.StringUtils.hasText;
  * create : 2017/09/26
  */
 public class ErrorResponse {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ErrorResponse.class);
 
     private String error;
 
@@ -48,6 +56,15 @@ public class ErrorResponse {
 
     public void setErrorUri(String errorUri) {
         this.errorUri = errorUri;
+    }
+    
+    public String toJSON(){
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     public String buildQuerystring() {
@@ -110,9 +127,19 @@ public class ErrorResponse {
         if (hasText(uri)) {
             response.sendRedirect(makeRedirectUri(uri));
         } else {
-            response.setContentType("text/html");
-            response.getWriter().print(getError());
+            if(isProduceJSON(request)){
+                response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+                response.getWriter().print(this.toJSON());
+            }else{
+                response.setContentType(MediaType.TEXT_HTML_VALUE);
+                response.getWriter().print(getError());
+            }
         }
+    }
+    
+    private boolean isProduceJSON(HttpServletRequest request){
+        return request.getRequestURI()
+                .endsWith("/oauth/token");
     }
 
     /**

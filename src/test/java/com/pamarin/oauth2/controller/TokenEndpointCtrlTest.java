@@ -84,7 +84,7 @@ public class TokenEndpointCtrlTest {
     @Test
     public void shouldBeOk() throws Exception {
         this.mockMvc.perform(
-                post("/api/v1/oauth/token?grant_type=code&code=XXX&redirect_uri=AAA")
+                post("/api/v1/oauth/token?grant_type=code&code=XXX&redirect_uri=http://localhost/callback")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(httpBasic("test", "password"))
         )

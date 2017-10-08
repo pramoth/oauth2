@@ -24,7 +24,7 @@ import static org.springframework.util.StringUtils.hasText;
 public class ErrorResponse {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErrorResponse.class);
-    
+
     private final ValidUri.Validator validUriValidator = new ValidUri.Validator();
 
     private String error;
@@ -121,21 +121,17 @@ public class ErrorResponse {
     }
 
     public void returnError(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String uri = request.getParameter("redirect_uri");
-        if (hasText(uri) && validUriValidator.isValid(uri)) {
-            response.sendRedirect(makeRedirectUri(uri));
-        } else {
-            writeErrorBody(request, response);
-        }
-    }
-
-    private void writeErrorBody(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isProduceJSON(request)) {
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.getWriter().print(this.toJSON());
         } else {
-            response.setContentType(MediaType.TEXT_HTML_VALUE);
-            response.getWriter().print(getError());
+            String uri = request.getParameter("redirect_uri");
+            if (hasText(uri) && validUriValidator.isValid(uri)) {
+                response.sendRedirect(makeRedirectUri(uri));
+            } else {
+                response.setContentType(MediaType.TEXT_HTML_VALUE);
+                response.getWriter().print(getError());
+            }
         }
     }
 

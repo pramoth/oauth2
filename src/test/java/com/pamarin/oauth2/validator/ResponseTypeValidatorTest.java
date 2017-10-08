@@ -5,18 +5,13 @@ package com.pamarin.oauth2.validator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * @author jittagornp <http://jittagornp.me>
  * create : 2017/10/03
  */
 public class ResponseTypeValidatorTest {
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     private ResponseType.Validator validator;
 

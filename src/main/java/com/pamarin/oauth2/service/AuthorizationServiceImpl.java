@@ -4,6 +4,7 @@
 package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.exception.InvalidResponseTypeException;
+import com.pamarin.oauth2.exception.RequireApprovalException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationResponse;
@@ -36,6 +37,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Autowired
     private AccessTokenGenerator accessTokenGenerator;
 
+    @Autowired
+    private ApprovalService approvalService;
+
     private String getHostUrl() {
         return "";
     }
@@ -49,6 +53,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         clientVerification.verifyClientIdAndRedirectUri(authReq.getClientId(), authReq.getRedirectUri());
         scopeVerification.verifyByClientIdAndScope(authReq.getClientId(), authReq.getScope());
         if (loginSession.wasCreated()) {
+            if (!approvalService.wasApprovedByUserIdAndClientId(loginSession.getUserId(), authReq.getClientId())) {
+                throw new RequireApprovalException();
+            }
             return obtainingAuthorization(authReq);
         } else {
             return getHostUrl() + "/login?" + authReq.buildQuerystring();

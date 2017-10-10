@@ -6,12 +6,10 @@ package com.pamarin.oauth2.service;
 
 /**
  * @author jittagornp <http://jittagornp.me>  
- * create : 2017/09/25
+ * create : 2017/10/10
  */
-public interface LoginSession {
+public interface ApprovalService {
 
-    boolean wasCreated();
-    
-    Long getUserId();
+    boolean wasApprovedByUserIdAndClientId(Long userId, String clientId);
     
 }

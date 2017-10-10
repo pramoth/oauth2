@@ -11,6 +11,7 @@ import com.pamarin.oauth2.model.CodeAccessTokenRequest;
 import com.pamarin.oauth2.model.RefreshAccessTokenRequest;
 import com.pamarin.oauth2.service.AccessTokenGenerator;
 import com.pamarin.oauth2.service.AllowDomainService;
+import com.pamarin.oauth2.service.ApprovalService;
 import com.pamarin.oauth2.service.AuthorizationCodeGenerator;
 import com.pamarin.oauth2.service.ClientService;
 import com.pamarin.oauth2.service.ClientVerification;
@@ -29,7 +30,12 @@ import org.springframework.context.annotation.Configuration;
 public class OAuthConf {
 
     @Bean
-    ScopeService newScopeService() {
+    public ApprovalService newApprovalService() {
+        return (userId, clientId) -> false;
+    }
+
+    @Bean
+    public ScopeService newScopeService() {
         return (clientId) -> Arrays.asList("read");
     }
 
@@ -45,7 +51,17 @@ public class OAuthConf {
 
     @Bean
     public LoginSession newLoginSession() {
-        return () -> false;
+        return new LoginSession() {
+            @Override
+            public boolean wasCreated() {
+                return false;
+            }
+
+            @Override
+            public Long getUserId() {
+                return 1L;
+            }
+        };
     }
 
     @Bean
@@ -79,7 +95,7 @@ public class OAuthConf {
             @Override
             public AccessTokenResponse generate(CodeAccessTokenRequest request) {
                 clientVerification.verifyClientIdAndClientSecret(
-                        request.getClientId(), 
+                        request.getClientId(),
                         request.getClientSecret()
                 );
                 return newAccessTokenResponse();
@@ -88,7 +104,7 @@ public class OAuthConf {
             @Override
             public AccessTokenResponse generate(RefreshAccessTokenRequest request) {
                 clientVerification.verifyClientIdAndClientSecret(
-                        request.getClientId(), 
+                        request.getClientId(),
                         request.getClientSecret()
                 );
                 return newAccessTokenResponse();

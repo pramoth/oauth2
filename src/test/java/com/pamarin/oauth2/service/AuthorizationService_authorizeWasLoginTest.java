@@ -4,6 +4,7 @@
 package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.exception.InvalidResponseTypeException;
+import com.pamarin.oauth2.exception.RequireApprovalException;
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AuthorizationResponse;
@@ -44,10 +45,16 @@ public class AuthorizationService_authorizeWasLoginTest {
     @Mock
     private AccessTokenGenerator accessTokenGenerator;
 
+    @Mock
+    private ApprovalService approvalService;
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
         when(loginSession.wasCreated()).thenReturn(true);
+        when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
+        when(approvalService.wasApprovedByUserIdAndClientId(any(Long.class), any(String.class)))
+                .thenReturn(true);
     }
 
     @Test(expected = InvalidResponseTypeException.class)
@@ -65,9 +72,24 @@ public class AuthorizationService_authorizeWasLoginTest {
         String output = authorizationService.authorize(input);
     }
 
+    @Test(expected = RequireApprovalException.class)
+    public void shouldBeThrowRequireApprovalException_whenNeverApprove() {
+        when(approvalService.wasApprovedByUserIdAndClientId(any(Long.class), any(String.class)))
+                .thenReturn(false);
+
+        AuthorizationRequest input = new AuthorizationRequest.Builder()
+                .setClientId("1234")
+                .setRedirectUri("https://pamarin.com/callback")
+                .setResponseType("ABC")
+                .setScope("read")
+                .setState("XYZ")
+                .build();
+
+        String output = authorizationService.authorize(input);
+    }
+
     @Test
     public void shouldBeReturnCode_whenResponseTypeIsCode() {
-        when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
         when(authorizationCodeGenerator.generate(any(AuthorizationRequest.class)))
                 .thenReturn(
                         new AuthorizationResponse.Builder()
@@ -89,7 +111,6 @@ public class AuthorizationService_authorizeWasLoginTest {
 
     @Test
     public void shouldBeReturnCode_whenResponseTypeIsCodeAndHasQuerystring() {
-        when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
         when(authorizationCodeGenerator.generate(any(AuthorizationRequest.class)))
                 .thenReturn(
                         new AuthorizationResponse.Builder()
@@ -111,7 +132,6 @@ public class AuthorizationService_authorizeWasLoginTest {
 
     @Test
     public void shouldBeReturnCodeAndState_whenResponseTypeIsCode() {
-        when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
         when(authorizationCodeGenerator.generate(any(AuthorizationRequest.class)))
                 .thenReturn(
                         new AuthorizationResponse.Builder()
@@ -134,7 +154,6 @@ public class AuthorizationService_authorizeWasLoginTest {
 
     @Test
     public void shouldBeReturnToken_whenResponseTypeIsToken() {
-        when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
         when(accessTokenGenerator.generate(any(AuthorizationRequest.class)))
                 .thenReturn(
                         new AccessTokenResponse.Builder()

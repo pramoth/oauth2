@@ -7,6 +7,7 @@ import com.pamarin.oauth2.exception.InvalidClientIdException;
 import com.pamarin.oauth2.exception.InvalidRedirectUriException;
 import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.exception.InvalidScopeException;
+import com.pamarin.oauth2.exception.RequireApprovalException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.service.AuthorizationService;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 /**
  * @author jittagornp <http://jittagornp.me>
@@ -109,5 +111,14 @@ public class AuthorizeEndpointCtrlTest {
         this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("http://localhost/callback?error=server_error"));
+    }
+
+    @Test
+    public void shouldBeReturnViewAuthorize_whenThrowRequireApprovalException() throws Exception {
+        when(authorizationService.authorize(any(AuthorizationRequest.class)))
+                .thenThrow(RequireApprovalException.class);
+        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("authorize"));
     }
 }

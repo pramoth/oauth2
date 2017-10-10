@@ -47,11 +47,11 @@ public class AuthorizationService_authorizeWasLoginTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+        when(loginSession.wasCreated()).thenReturn(true);
     }
 
     @Test(expected = InvalidResponseTypeException.class)
     public void shouldBeThrowUnsupportedOperationException_whenInvalidResponseType() {
-        when(loginSession.wasCreated()).thenReturn(true);
         when(responseTypeValidator.isValid(any(String.class))).thenReturn(false);
 
         AuthorizationRequest input = new AuthorizationRequest.Builder()
@@ -67,7 +67,6 @@ public class AuthorizationService_authorizeWasLoginTest {
 
     @Test
     public void shouldBeReturnCode_whenResponseTypeIsCode() {
-        when(loginSession.wasCreated()).thenReturn(true);
         when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
         when(authorizationCodeGenerator.generate(any(AuthorizationRequest.class)))
                 .thenReturn(
@@ -90,7 +89,6 @@ public class AuthorizationService_authorizeWasLoginTest {
 
     @Test
     public void shouldBeReturnCode_whenResponseTypeIsCodeAndHasQuerystring() {
-        when(loginSession.wasCreated()).thenReturn(true);
         when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
         when(authorizationCodeGenerator.generate(any(AuthorizationRequest.class)))
                 .thenReturn(
@@ -113,7 +111,6 @@ public class AuthorizationService_authorizeWasLoginTest {
 
     @Test
     public void shouldBeReturnCodeAndState_whenResponseTypeIsCode() {
-        when(loginSession.wasCreated()).thenReturn(true);
         when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
         when(authorizationCodeGenerator.generate(any(AuthorizationRequest.class)))
                 .thenReturn(
@@ -137,7 +134,6 @@ public class AuthorizationService_authorizeWasLoginTest {
 
     @Test
     public void shouldBeReturnToken_whenResponseTypeIsToken() {
-        when(loginSession.wasCreated()).thenReturn(true);
         when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
         when(accessTokenGenerator.generate(any(AuthorizationRequest.class)))
                 .thenReturn(

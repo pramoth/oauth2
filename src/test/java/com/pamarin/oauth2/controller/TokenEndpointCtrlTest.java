@@ -103,9 +103,19 @@ public class TokenEndpointCtrlTest {
     }
 
     @Test
-    public void shouldBeOk() throws Exception {
+    public void shouldBeOk_whenGrantTypeIsAuthorizationCode() throws Exception {
         this.mockMvc.perform(
                 post("/api/v1/oauth/token?grant_type=authorization_code&code=XXX&redirect_uri=http://localhost/callback")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(httpBasic("test", "password"))
+        )
+                .andExpect(status().isOk());
+    }
+    
+    @Test
+    public void shouldBeOk_whenGrantTypeIsRefreshToken() throws Exception {
+        this.mockMvc.perform(
+                post("/api/v1/oauth/token?grant_type=refresh_token&refresh_token=XXX&redirect_uri=http://localhost/callback")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(httpBasic("test", "password"))
         )

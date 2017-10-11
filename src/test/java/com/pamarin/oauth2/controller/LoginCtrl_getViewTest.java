@@ -3,9 +3,7 @@
  */
 package com.pamarin.oauth2.controller;
 
-import com.pamarin.oauth2.DefaultAuthorizationRequest;
 import com.pamarin.oauth2.exception.InvalidRedirectUriException;
-import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.provider.HostUrlProvider;
 import com.pamarin.oauth2.service.ClientVerification;
 import org.junit.Before;
@@ -40,26 +38,11 @@ public class LoginCtrl_getViewTest {
     private HostUrlProvider hostUrlProvider;
 
     @MockBean
-    private DefaultAuthorizationRequest defaultAuthorizationRequest;
-
-    @MockBean
     private ClientVerification clientVerification;
 
     @Before
     public void before() {
         when(hostUrlProvider.provide()).thenReturn("http://localhost");
-        when(defaultAuthorizationRequest.getDefault())
-                .thenReturn(defaultAuthorizationRequest());
-    }
-
-    private AuthorizationRequest defaultAuthorizationRequest() {
-        return new AuthorizationRequest.Builder()
-                .setClientId("123456")
-                .setRedirectUri("http://localhost")
-                .setResponseType("code")
-                .setScope("read")
-                .setState("XYZ")
-                .build();
     }
 
     @Test
@@ -114,7 +97,7 @@ public class LoginCtrl_getViewTest {
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("http://localhost/callback?error=invalid_scope"));
     }
-    
+
     @Test
     public void shouldBeOk() throws Exception {
         this.mockMvc.perform(get("/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback"))

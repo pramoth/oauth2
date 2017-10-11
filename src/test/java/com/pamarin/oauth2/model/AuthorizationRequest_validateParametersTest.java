@@ -61,20 +61,6 @@ public class AuthorizationRequest_validateParametersTest {
     }
 
     @Test
-    public void shouldBeRequireScope_whenHaveSomeValue() throws MissingServletRequestParameterException {
-
-        exception.expect(MissingServletRequestParameterException.class);
-        exception.expectMessage("Required String parameter 'scope' is not present");
-
-        AuthorizationRequest request = new AuthorizationRequest.Builder()
-                .setResponseType("code")
-                .setClientId("123456")
-                .setRedirectUri("http://localhost/callback")
-                .build();
-        request.validateParameters();
-    }
-
-    @Test
     public void shouldBeOk_whenHaveAllRequireValues() throws MissingServletRequestParameterException {
         AuthorizationRequest request = new AuthorizationRequest.Builder()
                 .setResponseType("code")

@@ -4,7 +4,6 @@
 package com.pamarin.oauth2.controller;
 
 import com.pamarin.oauth2.DefaultAuthorizationRequest;
-import com.pamarin.oauth2.exception.InvalidClientIdAndRedirectUriException;
 import com.pamarin.oauth2.exception.InvalidRedirectUriException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.provider.HostUrlProvider;
@@ -12,8 +11,6 @@ import com.pamarin.oauth2.service.ClientVerification;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Matchers.any;
-import org.mockito.Mockito;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +21,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 
 /**
  * @author jittagornp <http://jittagornp.me>
@@ -34,7 +31,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(LoginCtrl.class)
-public class LoginCtrlTest {
+public class LoginCtrl_getViewTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -95,12 +92,34 @@ public class LoginCtrlTest {
     }
 
     @Test
-    public void shouldBeErrorInvalidRequest_whenClientIdIs000000AndInvalidRedirectUri() throws Exception {
+    public void shouldBeErrorUnsupportResponseType_whenInvalidRedirectUri() throws Exception {
+        this.mockMvc.perform(get("/login?response_type=AAA&client_id=000000&redirect_uri=http://localhost/callback"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost/callback?error=unsupported_response_type"));
+    }
+
+    @Test
+    public void shouldBeErrorInvalidRequest_whenInvalidRedirectUri() throws Exception {
         doThrow(InvalidRedirectUriException.class)
                 .when(clientVerification)
                 .verifyClientIdAndRedirectUri("000000", "AAA");
         this.mockMvc.perform(get("/login?response_type=code&client_id=000000&redirect_uri=AAA"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("invalid_request"));
+    }
+
+    @Test
+    public void shouldBeErrorInvalidScope_whenInvalidScope() throws Exception {
+        this.mockMvc.perform(get("/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback&scope=write"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("http://localhost/callback?error=invalid_scope"));
+    }
+    
+    @Test
+    public void shouldBeOk() throws Exception {
+        this.mockMvc.perform(get("/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"))
+                .andExpect(model().attribute("processUrl", "http://localhost/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback&scope=read"));
     }
 }

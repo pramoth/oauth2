@@ -31,6 +31,11 @@ import org.springframework.context.annotation.Configuration;
 public class OAuthConf {
 
     @Bean
+    public DefaultScope newDefaultScope() {
+        return () -> "read";
+    }
+
+    @Bean
     public DefaultAuthorizationRequest newDefaultAuthorizationRequest() {
         return () -> new AuthorizationRequest.Builder()
                 .setClientId("123456")

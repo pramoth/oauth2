@@ -88,10 +88,6 @@ public class AuthorizationRequest {
             if (!hasText(redirectUri)) {
                 throw new MissingServletRequestParameterException("redirect_uri", "String");
             }
-
-            if (!hasText(scope)) {
-                throw new MissingServletRequestParameterException("scope", "String");
-            }
         }
     }
 

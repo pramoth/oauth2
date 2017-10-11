@@ -24,7 +24,7 @@ public class AuthorizeEndpointCtrl {
     @Autowired
     private AuthorizationService authorizationService;
 
-    @GetMapping("/api/v1/oauth/authorize")
+    @GetMapping("/oauth/v1/authorize")
     public ModelAndView authorizeReturnCode(
             @RequestParam("response_type") String responseType,
             @RequestParam("client_id") String clientId,

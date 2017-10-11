@@ -137,7 +137,7 @@ public class ErrorResponse {
 
     private boolean isProduceJSON(HttpServletRequest request) {
         return request.getRequestURI()
-                .endsWith("/oauth/token");
+                .matches("\\/oauth\\/v.*\\/token");
     }
 
     /**

@@ -31,7 +31,7 @@ public class TokenEndpointCtrl {
 
     @ResponseBody
     @PostMapping(
-            value = "/api/v1/oauth/token",
+            value = "/oauth/v1/token",
             params = "grant_type=authorization_code",
             consumes = "application/x-www-form-urlencoded",
             produces = "application/json"
@@ -54,7 +54,7 @@ public class TokenEndpointCtrl {
 
     @ResponseBody
     @PostMapping(
-            value = "/api/v1/oauth/token",
+            value = "/oauth/v1/token",
             params = "grant_type=refresh_token",
             consumes = "application/x-www-form-urlencoded",
             produces = "application/json"

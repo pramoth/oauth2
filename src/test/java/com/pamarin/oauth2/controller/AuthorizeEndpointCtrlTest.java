@@ -41,21 +41,21 @@ public class AuthorizeEndpointCtrlTest {
 
     @Test
     public void shouldBeErrorInvalidRequest_whenEmptyParameter() throws Exception {
-        this.mockMvc.perform(get("/api/v1/oauth/authorize"))
+        this.mockMvc.perform(get("/oauth/v1/authorize"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("invalid_request"));
     }
 
     @Test
     public void shouldBeErrorInvalidRequest_whenInvalidParameter1() throws Exception {
-        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code"))
+        this.mockMvc.perform(get("/oauth/v1/authorize?response_type=code"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("invalid_request"));
     }
 
     @Test
     public void shouldBeErrorInvalidRequest_whenInvalidParameter2() throws Exception {
-        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456"))
+        this.mockMvc.perform(get("/oauth/v1/authorize?response_type=code&client_id=123456"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("invalid_request"));
     }
@@ -64,7 +64,7 @@ public class AuthorizeEndpointCtrlTest {
     public void shouldBeErrorUnsupportedResponseType_whenResponseTypeIsAAA() throws Exception {
         when(authorizationService.authorize(any(AuthorizationRequest.class)))
                 .thenThrow(InvalidResponseTypeException.class);
-        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=AAA&client_id=123456&redirect_uri=http://localhost/callback"))
+        this.mockMvc.perform(get("/oauth/v1/authorize?response_type=AAA&client_id=123456&redirect_uri=http://localhost/callback"))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("http://localhost/callback?error=unsupported_response_type"));
     }
@@ -73,7 +73,7 @@ public class AuthorizeEndpointCtrlTest {
     public void shouldBeErrorInvalidRequest_whenRedirectUriIsCallback() throws Exception {
         when(authorizationService.authorize(any(AuthorizationRequest.class)))
                 .thenThrow(new InvalidRedirectUriException("/callback", "Invalid redirect_uri."));
-        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=AAA&client_id=123456&redirect_uri=/callback"))
+        this.mockMvc.perform(get("/oauth/v1/authorize?response_type=AAA&client_id=123456&redirect_uri=/callback"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("invalid_request"));
     }
@@ -81,7 +81,7 @@ public class AuthorizeEndpointCtrlTest {
     @Test
     public void shouldBeRedirect2Login_whenNotLogin() throws Exception {
         when(authorizationService.authorize(any(AuthorizationRequest.class))).thenReturn("/login?response_type=code&client_id=123456&redirect_uri=http://localhost/callback");
-        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
+        this.mockMvc.perform(get("/oauth/v1/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/login?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"));
     }
@@ -90,7 +90,7 @@ public class AuthorizeEndpointCtrlTest {
     public void shouldBeErrorInvalidClient_whenThrowInvalidClientIdException() throws Exception {
         when(authorizationService.authorize(any(AuthorizationRequest.class)))
                 .thenThrow(InvalidClientIdException.class);
-        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
+        this.mockMvc.perform(get("/oauth/v1/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("http://localhost/callback?error=invalid_client"));
     }
@@ -99,7 +99,7 @@ public class AuthorizeEndpointCtrlTest {
     public void shouldBeErrorInvalidScope_whenThrowInvalidScopeException() throws Exception {
         when(authorizationService.authorize(any(AuthorizationRequest.class)))
                 .thenThrow(InvalidScopeException.class);
-        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback&scope=AAA"))
+        this.mockMvc.perform(get("/oauth/v1/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback&scope=AAA"))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("http://localhost/callback?error=invalid_scope"));
     }
@@ -108,7 +108,7 @@ public class AuthorizeEndpointCtrlTest {
     public void shouldBeErrorServerError_whenThrowException() throws Exception {
         when(authorizationService.authorize(any(AuthorizationRequest.class)))
                 .thenThrow(Exception.class);
-        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
+        this.mockMvc.perform(get("/oauth/v1/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("http://localhost/callback?error=server_error"));
     }
@@ -117,7 +117,7 @@ public class AuthorizeEndpointCtrlTest {
     public void shouldBeReturnViewAuthorize_whenThrowRequireApprovalException() throws Exception {
         when(authorizationService.authorize(any(AuthorizationRequest.class)))
                 .thenThrow(RequireApprovalException.class);
-        this.mockMvc.perform(get("/api/v1/oauth/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
+        this.mockMvc.perform(get("/oauth/v1/authorize?response_type=code&client_id=123456&redirect_uri=http://localhost/callback"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("authorize"));
     }

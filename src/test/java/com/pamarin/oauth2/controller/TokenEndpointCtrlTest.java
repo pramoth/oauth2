@@ -29,21 +29,21 @@ public class TokenEndpointCtrlTest {
 
     @Test
     public void shouldBeErrorInvalidRequest_whenExchangeByHttpGet() throws Exception {
-        this.mockMvc.perform(get("/api/v1/oauth/token"))
+        this.mockMvc.perform(get("/oauth/v1/token"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Not support http 'GET'.\"}"));
     }
 
     @Test
     public void shouldBeErrorInvalidRequest_whenNotSetMediaType() throws Exception {
-        this.mockMvc.perform(post("/api/v1/oauth/token"))
+        this.mockMvc.perform(post("/oauth/v1/token"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"error\":\"invalid_request\",\"error_description\":\"Not support media type 'null'.\"}"));
     }
 
     @Test
     public void shouldBeErrorInvalidRequest_whenEmptyGrantTypeParameter() throws Exception {
-        this.mockMvc.perform(post("/api/v1/oauth/token").contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        this.mockMvc.perform(post("/oauth/v1/token").contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"error\":\"invalid_grant\",\"error_description\":\"Require parameter 'grant_type=authorization_code or grant_type=refresh_token'.\"}"));
     }
@@ -51,7 +51,7 @@ public class TokenEndpointCtrlTest {
     @Test
     public void shouldBeErrorInvalidRequest_whenEmptyAuthorizationHeader() throws Exception {
         this.mockMvc.perform(
-                post("/api/v1/oauth/token?grant_type=authorization_code")
+                post("/oauth/v1/token?grant_type=authorization_code")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         )
                 .andExpect(status().isBadRequest())
@@ -61,7 +61,7 @@ public class TokenEndpointCtrlTest {
     @Test
     public void shouldBeErrorInvalidRequest_whenEmptyCodeParameter() throws Exception {
         this.mockMvc.perform(
-                post("/api/v1/oauth/token?grant_type=authorization_code")
+                post("/oauth/v1/token?grant_type=authorization_code")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(httpBasic("test", "password"))
         )
@@ -72,7 +72,7 @@ public class TokenEndpointCtrlTest {
     @Test
     public void shouldBeErrorInvalidRequest_whenHasCodeButEmptyRedirectUriParameter() throws Exception {
         this.mockMvc.perform(
-                post("/api/v1/oauth/token?grant_type=authorization_code&code=XXX")
+                post("/oauth/v1/token?grant_type=authorization_code&code=XXX")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .with(httpBasic("test", "password"))
         )
@@ -83,7 +83,7 @@ public class TokenEndpointCtrlTest {
     @Test
     public void shouldBeErrorInvalidRequest_whenEmptyRefreshTokenParameter() throws Exception {
         this.mockMvc.perform(
-                post("/api/v1/oauth/token?grant_type=refresh_token")
+                post("/oauth/v1/token?grant_type=refresh_token")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .with(httpBasic("test", "password"))
         )
@@ -94,7 +94,7 @@ public class TokenEndpointCtrlTest {
     @Test
     public void shouldBeErrorInvalidRequest_whenHasRefreshTokenButEmptyRedirectUriParameter() throws Exception {
         this.mockMvc.perform(
-                post("/api/v1/oauth/token?grant_type=refresh_token&refresh_token=XXX")
+                post("/oauth/v1/token?grant_type=refresh_token&refresh_token=XXX")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .with(httpBasic("test", "password"))
         )
@@ -105,7 +105,7 @@ public class TokenEndpointCtrlTest {
     @Test
     public void shouldBeOk_whenGrantTypeIsAuthorizationCode() throws Exception {
         this.mockMvc.perform(
-                post("/api/v1/oauth/token?grant_type=authorization_code&code=XXX&redirect_uri=http://localhost/callback")
+                post("/oauth/v1/token?grant_type=authorization_code&code=XXX&redirect_uri=http://localhost/callback")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(httpBasic("test", "password"))
         )
@@ -115,7 +115,7 @@ public class TokenEndpointCtrlTest {
     @Test
     public void shouldBeOk_whenGrantTypeIsRefreshToken() throws Exception {
         this.mockMvc.perform(
-                post("/api/v1/oauth/token?grant_type=refresh_token&refresh_token=XXX&redirect_uri=http://localhost/callback")
+                post("/oauth/v1/token?grant_type=refresh_token&refresh_token=XXX&redirect_uri=http://localhost/callback")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(httpBasic("test", "password"))
         )

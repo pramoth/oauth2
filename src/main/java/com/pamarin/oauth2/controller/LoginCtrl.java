@@ -54,26 +54,25 @@ public class LoginCtrl {
                 .setScope(request.getParameter("scope"))
                 .setState(request.getParameter("state"))
                 .build();
-        authReq.validateParameters();
-        if (authReq.haveSomeParameters()) {
-            if (!responseTypeValidator.isValid(authReq.getResponseType())) {
-                throw new InvalidResponseTypeException(authReq.getResponseType(), "Invalid responseType");
-            }
-            clientVerification.verifyClientIdAndRedirectUri(authReq.getClientId(), authReq.getRedirectUri());
-            if (!hasText(authReq.getScope())) {
-                authReq.setScope(defaultScope.getDefault());
-            }
-            scopeVerification.verifyByClientIdAndScope(authReq.getClientId(), authReq.getScope());
+        if (!authReq.haveSomeParameters()) {
             return new ModelAndView(
                     "login",
                     "processUrl",
-                    hostUrlProvider.provide() + "/login?" + authReq.buildQuerystring());
+                    hostUrlProvider.provide() + "/login");
         }
-
+        authReq.validateParameters();
+        if (!responseTypeValidator.isValid(authReq.getResponseType())) {
+            throw new InvalidResponseTypeException(authReq.getResponseType(), "Invalid responseType");
+        }
+        clientVerification.verifyClientIdAndRedirectUri(authReq.getClientId(), authReq.getRedirectUri());
+        if (!hasText(authReq.getScope())) {
+            authReq.setScope(defaultScope.getDefault());
+        }
+        scopeVerification.verifyByClientIdAndScope(authReq.getClientId(), authReq.getScope());
         return new ModelAndView(
                 "login",
                 "processUrl",
-                hostUrlProvider.provide() + "/login");
+                hostUrlProvider.provide() + "/login?" + authReq.buildQuerystring());
     }
 
     @PostMapping("/login")

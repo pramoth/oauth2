@@ -4,6 +4,7 @@
 package com.pamarin.oauth2.service;
 
 import com.pamarin.oauth2.model.AuthorizationRequest;
+import com.pamarin.oauth2.provider.HostUrlProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class AuthorizationService_authorizeNotLoginTest {
 
     @Mock
     private ResponseType.Validator responseTypeValidator;
-    
+
     @Mock
     private ScopeVerification scopeVerification;
 
@@ -35,10 +36,14 @@ public class AuthorizationService_authorizeNotLoginTest {
     @Mock
     private LoginSession loginSession;
 
+    @Mock
+    private HostUrlProvider hostUrlProvider;
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
         when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
+        when(hostUrlProvider.provide()).thenReturn("");
     }
 
     @Test

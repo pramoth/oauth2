@@ -9,6 +9,7 @@ import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AuthorizationResponse;
 import com.pamarin.oauth2.model.CodeAccessTokenRequest;
 import com.pamarin.oauth2.model.RefreshAccessTokenRequest;
+import com.pamarin.oauth2.provider.HostUrlProvider;
 import com.pamarin.oauth2.service.AccessTokenGenerator;
 import com.pamarin.oauth2.service.AllowDomainService;
 import com.pamarin.oauth2.service.ApprovalService;
@@ -28,6 +29,22 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class OAuthConf {
+
+    @Bean
+    public DefaultAuthorizationRequest newDefaultAuthorizationRequest() {
+        return () -> new AuthorizationRequest.Builder()
+                .setClientId("123456")
+                .setRedirectUri(newHostUrlProvider() + "/callback")
+                .setResponseType("code")
+                .setScope("read")
+                .setState("XYZ")
+                .build();
+    }
+
+    @Bean
+    public HostUrlProvider newHostUrlProvider() {
+        return () -> "http://localhost:8765";
+    }
 
     @Bean
     public ApprovalService newApprovalService() {

@@ -8,6 +8,7 @@ import com.pamarin.oauth2.exception.RequireApprovalException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationResponse;
+import com.pamarin.oauth2.provider.HostUrlProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.pamarin.oauth2.validator.ResponseType;
@@ -18,6 +19,9 @@ import com.pamarin.oauth2.validator.ResponseType;
  */
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
+
+    @Autowired
+    private HostUrlProvider hostUrlProvider;
 
     @Autowired
     private ResponseType.Validator responseTypeValidator;
@@ -40,10 +44,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Autowired
     private ApprovalService approvalService;
 
-    private String getHostUrl() {
-        return "";
-    }
-
     @Override
     public String authorize(AuthorizationRequest authReq) {
         if (!responseTypeValidator.isValid(authReq.getResponseType())) {
@@ -58,7 +58,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             }
             return obtainingAuthorization(authReq);
         } else {
-            return getHostUrl() + "/login?" + authReq.buildQuerystring();
+            return hostUrlProvider.provide() + "/login?" + authReq.buildQuerystring();
         }
     }
 

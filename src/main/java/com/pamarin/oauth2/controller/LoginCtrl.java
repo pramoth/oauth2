@@ -4,12 +4,17 @@
 package com.pamarin.oauth2.controller;
 
 import com.pamarin.oauth2.DefaultAuthorizationRequest;
+import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.provider.HostUrlProvider;
+import com.pamarin.oauth2.service.ClientVerification;
+import com.pamarin.oauth2.validator.ResponseType;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import static org.springframework.util.StringUtils.hasText;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +32,12 @@ public class LoginCtrl {
 
     @Autowired
     private DefaultAuthorizationRequest defaultAuthorizationRequest;
+
+    @Autowired
+    private ResponseType.Validator responseTypeValidator;
+
+    @Autowired
+    private ClientVerification clientVerification;
 
     private AuthorizationRequest makeAuthorizationRequest(
             String responseType,
@@ -55,17 +66,19 @@ public class LoginCtrl {
             @RequestParam(value = "redirect_uri", required = false) String redirectUri,
             @RequestParam(value = "scope", required = false) String scope,
             @RequestParam(value = "state", required = false) String state
-    ) {
+    ) throws MissingServletRequestParameterException {
+        AuthorizationRequest authReq = new AuthorizationRequest.Builder()
+                .setClientId(clientId)
+                .setRedirectUri(redirectUri)
+                .setResponseType(responseType)
+                .setScope(scope)
+                .setState(state)
+                .build();
+        authReq.validateParameters();
         return new ModelAndView(
                 "login",
                 "processUrl",
-                hostUrlProvider.provide() + "/login?" + makeAuthorizationRequest(
-                responseType,
-                clientId,
-                redirectUri,
-                scope,
-                state
-        ).buildQuerystring());
+                hostUrlProvider.provide() + "/login");
     }
 
     @PostMapping("/login")

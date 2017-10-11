@@ -4,6 +4,7 @@
 package com.pamarin.oauth2.model;
 
 import static org.springframework.util.StringUtils.hasText;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 
 /**
  * @author jittagornp <http://jittagornp.me>
@@ -64,6 +65,34 @@ public class AuthorizationRequest {
         return hasText(responseType)
                 && hasText(clientId)
                 && hasText(redirectUri);
+    }
+
+    public boolean hasSomeParameters() {
+        return hasText(responseType)
+                || hasText(clientId)
+                || hasText(redirectUri)
+                || hasText(scope)
+                || hasText(state);
+    }
+
+    public void validateParameters() throws MissingServletRequestParameterException {
+        if (hasSomeParameters()) {
+            if (!hasText(responseType)) {
+                throw new MissingServletRequestParameterException("response_type", "String");
+            }
+
+            if (!hasText(clientId)) {
+                throw new MissingServletRequestParameterException("client_id", "String");
+            }
+
+            if (!hasText(redirectUri)) {
+                throw new MissingServletRequestParameterException("redirect_uri", "String");
+            }
+
+            if (!hasText(scope)) {
+                throw new MissingServletRequestParameterException("scope", "String");
+            }
+        }
     }
 
     public boolean responseTypeIsCode() {

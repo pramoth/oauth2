@@ -3,6 +3,7 @@
  */
 package com.pamarin.oauth2.controller;
 
+import com.pamarin.oauth2.DefaultScope;
 import com.pamarin.oauth2.exception.InvalidRedirectUriException;
 import com.pamarin.oauth2.provider.HostUrlProvider;
 import com.pamarin.oauth2.service.ClientVerification;
@@ -10,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -39,6 +42,9 @@ public class LoginCtrl_getViewTest {
 
     @MockBean
     private ClientVerification clientVerification;
+
+    @MockBean
+    private DefaultScope defaultScope;
 
     @Before
     public void before() {
@@ -99,10 +105,19 @@ public class LoginCtrl_getViewTest {
     }
 
     @Test
-    public void shouldBeOk() throws Exception {
+    public void shouldBeOk_whenEmptyScope() throws Exception {
         this.mockMvc.perform(get("/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("login"))
                 .andExpect(model().attribute("processUrl", "http://localhost/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback&scope=read"));
+    }
+
+    @Test
+    public void shouldBeOk_whenScopeIsRead() throws Exception {
+        this.mockMvc.perform(get("/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback&scope=read"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"))
+                .andExpect(model().attribute("processUrl", "http://localhost/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback&scope=read"));
+        verify(defaultScope, never()).getDefault();
     }
 }

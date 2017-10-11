@@ -67,7 +67,7 @@ public class AuthorizationRequest {
                 && hasText(redirectUri);
     }
 
-    public boolean hasSomeParameters() {
+    public boolean haveSomeParameters() {
         return hasText(responseType)
                 || hasText(clientId)
                 || hasText(redirectUri)
@@ -76,7 +76,7 @@ public class AuthorizationRequest {
     }
 
     public void validateParameters() throws MissingServletRequestParameterException {
-        if (hasSomeParameters()) {
+        if (haveSomeParameters()) {
             if (!hasText(responseType)) {
                 throw new MissingServletRequestParameterException("response_type", "String");
             }

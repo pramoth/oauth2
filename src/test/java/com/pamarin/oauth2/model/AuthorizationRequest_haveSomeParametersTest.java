@@ -10,12 +10,12 @@ import org.junit.Test;
  * @author jittagornp <http://jittagornp.me>
  * create : 2017/10/11
  */
-public class AuthorizationRequest_hasSomeParametersTest {
+public class AuthorizationRequest_haveSomeParametersTest {
 
     @Test
     public void shouldBeFalse_whenNullAllParameters() {
         AuthorizationRequest input = new AuthorizationRequest();
-        boolean output = input.hasSomeParameters();
+        boolean output = input.haveSomeParameters();
         boolean expected = false;
         assertThat(output).isEqualTo(expected);
     }
@@ -25,7 +25,7 @@ public class AuthorizationRequest_hasSomeParametersTest {
         AuthorizationRequest input = new AuthorizationRequest.Builder()
                 .setClientId("123456")
                 .build();
-        boolean output = input.hasSomeParameters();
+        boolean output = input.haveSomeParameters();
         boolean expected = true;
         assertThat(output).isEqualTo(expected);
     }
@@ -35,7 +35,7 @@ public class AuthorizationRequest_hasSomeParametersTest {
         AuthorizationRequest input = new AuthorizationRequest.Builder()
                 .setRedirectUri("http://localhost")
                 .build();
-        boolean output = input.hasSomeParameters();
+        boolean output = input.haveSomeParameters();
         boolean expected = true;
         assertThat(output).isEqualTo(expected);
     }
@@ -45,7 +45,7 @@ public class AuthorizationRequest_hasSomeParametersTest {
         AuthorizationRequest input = new AuthorizationRequest.Builder()
                 .setResponseType("code")
                 .build();
-        boolean output = input.hasSomeParameters();
+        boolean output = input.haveSomeParameters();
         boolean expected = true;
         assertThat(output).isEqualTo(expected);
     }
@@ -55,7 +55,7 @@ public class AuthorizationRequest_hasSomeParametersTest {
         AuthorizationRequest input = new AuthorizationRequest.Builder()
                 .setScope("read")
                 .build();
-        boolean output = input.hasSomeParameters();
+        boolean output = input.haveSomeParameters();
         boolean expected = true;
         assertThat(output).isEqualTo(expected);
     }
@@ -65,7 +65,7 @@ public class AuthorizationRequest_hasSomeParametersTest {
         AuthorizationRequest input = new AuthorizationRequest.Builder()
                 .setState("XYZ")
                 .build();
-        boolean output = input.hasSomeParameters();
+        boolean output = input.haveSomeParameters();
         boolean expected = true;
         assertThat(output).isEqualTo(expected);
     }

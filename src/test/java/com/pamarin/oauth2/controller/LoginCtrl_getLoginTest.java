@@ -3,16 +3,10 @@
  */
 package com.pamarin.oauth2.controller;
 
-import com.pamarin.oauth2.DefaultScope;
-import com.pamarin.oauth2.exception.InvalidRedirectUriException;
 import com.pamarin.oauth2.provider.HostUrlProvider;
-import com.pamarin.oauth2.service.ClientVerification;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

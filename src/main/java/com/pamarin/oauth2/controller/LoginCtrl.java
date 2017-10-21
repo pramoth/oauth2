@@ -41,8 +41,7 @@ public class LoginCtrl {
     @Autowired
     private UserVerification userVerification;
 
-    @GetMapping("/login")
-    public ModelAndView login(HttpServletRequest httpReq) throws MissingServletRequestParameterException {
+    private AuthorizationRequest buildAuthorizationRequest(HttpServletRequest httpReq) throws MissingServletRequestParameterException {
         AuthorizationRequest req = new AuthorizationRequest.Builder()
                 .setResponseType(httpReq.getParameter("response_type"))
                 .setClientId(httpReq.getParameter("client_id"))
@@ -50,16 +49,20 @@ public class LoginCtrl {
                 .setScope(httpReq.getParameter("scope"))
                 .setState(httpReq.getParameter("state"))
                 .build();
-        String q = "";
         if (req.haveSomeParameters()) {
             req.validateParameters();
             requestVerification.verify(req);
-            q = "?" + req.buildQuerystring();
         }
+        return req;
+    }
+
+    @GetMapping("/login")
+    public ModelAndView login(HttpServletRequest httpReq) throws MissingServletRequestParameterException {
+        AuthorizationRequest req = buildAuthorizationRequest(httpReq);
         return new ModelAndViewBuilder()
                 .setName("login")
                 .addAttribute("error", httpReq.getParameter("error"))
-                .addAttribute("processUrl", hostUrlProvider.provide() + "/login" + q)
+                .addAttribute("processUrl", hostUrlProvider.provide() + "/login" + (req.haveSomeParameters() ? ("?" + req.buildQuerystring()) : ""))
                 .build();
     }
 
@@ -69,20 +72,7 @@ public class LoginCtrl {
             HttpServletResponse httpResp,
             @Validated LoginCredential credential
     ) throws IOException, MissingServletRequestParameterException {
-        AuthorizationRequest req = new AuthorizationRequest.Builder()
-                .setResponseType(httpReq.getParameter("response_type"))
-                .setClientId(httpReq.getParameter("client_id"))
-                .setRedirectUri(httpReq.getParameter("redirect_uri"))
-                .setScope(httpReq.getParameter("scope"))
-                .setState(httpReq.getParameter("state"))
-                .build();
-        String q = "";
-        if (req.haveSomeParameters()) {
-            req.validateParameters();
-            requestVerification.verify(req);
-            q = "&" + req.buildQuerystring();
-        }
-
+        AuthorizationRequest req = buildAuthorizationRequest(httpReq);
         try {
             userVerification.verifyUsernameAndPassword(
                     credential.getUsername(),
@@ -90,7 +80,7 @@ public class LoginCtrl {
             );
         } catch (InvalidUsernamePasswordException ex) {
             LOG.warn("Invalid username password ", ex);
-            httpResp.sendRedirect(hostUrlProvider.provide() + "/login?error=invalid_username_password" + q);
+            httpResp.sendRedirect(hostUrlProvider.provide() + "/login?error=invalid_username_password" + (req.haveSomeParameters() ? ("&" + req.buildQuerystring()) : ""));
         }
     }
 }

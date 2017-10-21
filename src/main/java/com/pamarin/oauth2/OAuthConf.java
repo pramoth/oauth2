@@ -3,6 +3,7 @@
  */
 package com.pamarin.oauth2;
 
+import com.pamarin.oauth2.exception.InvalidUsernamePasswordException;
 import com.pamarin.oauth2.service.LoginSession;
 import com.pamarin.oauth2.model.AccessTokenResponse;
 import com.pamarin.oauth2.model.AuthorizationRequest;
@@ -17,6 +18,7 @@ import com.pamarin.oauth2.service.AuthorizationCodeGenerator;
 import com.pamarin.oauth2.service.ClientService;
 import com.pamarin.oauth2.service.ClientVerification;
 import com.pamarin.oauth2.service.ScopeService;
+import com.pamarin.oauth2.service.UserVerification;
 import java.util.Arrays;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,17 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class OAuthConf {
+
+    @Bean
+    public UserVerification newUserVerification() {
+        return (username, password) -> {
+            boolean isCorrect = "test".equals(username)
+                    && "password".equals(password);
+            if (!isCorrect) {
+                throw new InvalidUsernamePasswordException();
+            }
+        };
+    }
 
     @Bean
     public DefaultScope newDefaultScope() {

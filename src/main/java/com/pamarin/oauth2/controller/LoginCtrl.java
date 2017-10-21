@@ -40,19 +40,16 @@ public class LoginCtrl {
                 .setScope(httpReq.getParameter("scope"))
                 .setState(httpReq.getParameter("state"))
                 .build();
-        if (!req.haveSomeParameters()) {
-            return new ModelAndViewBuilder()
-                    .setName("login")
-                    .addAttribute("error", httpReq.getParameter("error"))
-                    .addAttribute("processUrl", hostUrlProvider.provide() + "/login")
-                    .build();
+        String queryString = "";
+        if (req.haveSomeParameters()) {
+            req.validateParameters();
+            requestVerification.verify(req);
+            queryString = "?" + req.buildQuerystring();
         }
-        req.validateParameters();
-        requestVerification.verify(req);
         return new ModelAndViewBuilder()
                 .setName("login")
                 .addAttribute("error", httpReq.getParameter("error"))
-                .addAttribute("processUrl", hostUrlProvider.provide() + "/login?" + req.buildQuerystring())
+                .addAttribute("processUrl", hostUrlProvider.provide() + "/login" + queryString)
                 .build();
     }
 

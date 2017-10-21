@@ -34,11 +34,6 @@ public class ModelAndViewBuilder {
         return this;
     }
 
-    public ModelAndViewBuilder addAllAttributes(Map<String, Object> values) {
-        getAttributes().putAll(values);
-        return this;
-    }
-
     public ModelAndView build() {
         ModelAndView mav = new ModelAndView(name);
         mav.addAllObjects(getAttributes());

@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(LoginCtrl.class)
-public class LoginCtrl_getViewTest {
+public class LoginCtrl_getLoginTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -95,13 +95,13 @@ public class LoginCtrl_getViewTest {
                 .andExpect(redirectedUrl("http://localhost/callback?error=invalid_scope"));
     }
 
-//    @Test
-//    public void shouldBeOk_whenEmptyScope() throws Exception {
-//        this.mockMvc.perform(get("/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("login"))
-//                .andExpect(model().attribute("processUrl", "http://localhost/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback&scope=read"));
-//    }
+    @Test
+    public void shouldBeOk_whenEmptyScope() throws Exception {
+        this.mockMvc.perform(get("/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"))
+                .andExpect(model().attribute("processUrl", "http://localhost/login?response_type=code&client_id=000000&redirect_uri=http://localhost/callback&scope=read"));
+    }
 
     @Test
     public void shouldBeOk_whenScopeIsRead() throws Exception {

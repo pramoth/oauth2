@@ -6,6 +6,7 @@ package com.pamarin.oauth2.controller;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.provider.HostUrlProvider;
 import com.pamarin.oauth2.service.AuthorizationRequestVerification;
+import com.pamarin.oauth2.view.ModelAndViewBuilder;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,36 +41,34 @@ public class LoginCtrl {
                 .setState(httpReq.getParameter("state"))
                 .build();
         if (!req.haveSomeParameters()) {
-            return new ModelAndView(
-                    "login",
-                    "processUrl",
-                    hostUrlProvider.provide() + "/login");
+            return new ModelAndViewBuilder()
+                    .setName("login")
+                    .addAttribute("error", httpReq.getParameter("error"))
+                    .addAttribute("processUrl", hostUrlProvider.provide() + "/login")
+                    .build();
         }
         req.validateParameters();
         requestVerification.verify(req);
-        return new ModelAndView(
-                "login",
-                "processUrl",
-                hostUrlProvider.provide() + "/login?" + req.buildQuerystring());
+        return new ModelAndViewBuilder()
+                .setName("login")
+                .addAttribute("error", httpReq.getParameter("error"))
+                .addAttribute("processUrl", hostUrlProvider.provide() + "/login?" + req.buildQuerystring())
+                .build();
     }
 
     @PostMapping("/login")
-    public void postLogin(
-            @RequestParam(value = "response_type", required = false) String responseType,
-            @RequestParam(value = "client_id", required = false) String clientId,
-            @RequestParam(value = "redirect_uri", required = false) String redirectUri,
-            @RequestParam(value = "scope", required = false) String scope,
-            @RequestParam(value = "state", required = false) String state,
+    public void postLogin(HttpServletRequest httpReq,
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             HttpServletResponse response
     ) throws IOException {
-//        response.sendRedirect(hostUrlProvider.provide() + "/login?error=invalid_username_password" + makeAuthorizationRequest(
-//                responseType,
-//                clientId,
-//                redirectUri,
-//                scope,
-//                state
-//        ).buildQuerystring());
+        AuthorizationRequest req = new AuthorizationRequest.Builder()
+                .setResponseType(httpReq.getParameter("response_type"))
+                .setClientId(httpReq.getParameter("client_id"))
+                .setRedirectUri(httpReq.getParameter("redirect_uri"))
+                .setScope(httpReq.getParameter("scope"))
+                .setState(httpReq.getParameter("state"))
+                .build();
+        response.sendRedirect(hostUrlProvider.provide() + "/login?error=invalid_username_password&" + req.buildQuerystring());
     }
 }

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ClientVerificationImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oauth2</a> &gt; <a href="index.source.html" class="el_package">com.pamarin.oauth2.service</a> &gt; <span class="el_source">ClientVerificationImpl.java</span></div><h1>ClientVerificationImpl.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2017 Pamarin.com
+ */
+package com.pamarin.oauth2.service;
+
+import com.pamarin.oauth2.exception.InvalidClientIdAndClientSecretException;
+import com.pamarin.oauth2.exception.InvalidClientIdAndRedirectUriException;
+import com.pamarin.oauth2.exception.InvalidClientIdException;
+import com.pamarin.oauth2.exception.InvalidRedirectUriException;
+import com.pamarin.oauth2.validator.ValidUri;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import static org.springframework.util.StringUtils.hasText;
+
+/**
+ * @author jittagornp &lt;http://jittagornp.me&gt;
+ * create : 2017/09/25
+ */
+@Service
+<span class="fc" id="L23">public class ClientVerificationImpl implements ClientVerification {</span>
+
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private AllowDomainService allowDomainService;
+
+    @Autowired
+    private ValidUri.Validator validUriValidator;
+
+    @Override
+    public void verifyClientIdAndRedirectUri(String clientId, String redirectUri) {
+<span class="pc bpc" id="L36" title="1 of 4 branches missed.">        boolean isValid = hasText(clientId) &amp;&amp; hasText(redirectUri);</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc" id="L38">            throw new InvalidClientIdAndRedirectUriException(</span>
+                    clientId,
+                    redirectUri,
+                    &quot;Required clientId and redirectUri.&quot;
+            );
+        }
+
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (!validUriValidator.isValid(redirectUri)) {</span>
+<span class="fc" id="L46">            throw new InvalidRedirectUriException(redirectUri, &quot;Invalid redirect uri.&quot;);</span>
+        }
+
+<span class="fc" id="L49">        List&lt;String&gt; domains = allowDomainService.findDomainByClientId(clientId);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (isEmpty(domains)) {</span>
+<span class="fc" id="L51">            throw new InvalidClientIdException(clientId, &quot;Empty allow domains.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        for (String domain : domains) {</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            if (redirectUri.startsWith(domain)) {</span>
+<span class="fc" id="L56">                return;</span>
+            }
+<span class="fc" id="L58">        }</span>
+
+<span class="fc" id="L60">        throw new InvalidClientIdAndRedirectUriException(</span>
+                clientId,
+                redirectUri,
+                &quot;Invalid Domains.&quot;
+        );
+    }
+
+    @Override
+    public void verifyClientIdAndClientSecret(String clientId, String clientSecret) {
+<span class="pc bpc" id="L69" title="1 of 4 branches missed.">        boolean isValid = hasText(clientId) &amp;&amp; hasText(clientSecret);</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc" id="L71">            throw new InvalidClientIdAndClientSecretException(</span>
+                    clientId,
+                    clientSecret,
+                    &quot;Required clientId and clientSecret.&quot;
+            );
+        }
+
+<span class="fc" id="L78">        String secret = clientService.findClientSecretByClientId(clientId);</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (!hasText(secret)) {</span>
+<span class="fc" id="L80">            throw new InvalidClientIdException(clientId, &quot;Empty clientSecret.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (!secret.equals(clientSecret)) {</span>
+<span class="fc" id="L84">            throw new InvalidClientIdAndClientSecretException(</span>
+                    clientId,
+                    clientSecret,
+                    &quot;Invalid clientSecret.&quot;
+            );
+        }
+<span class="fc" id="L90">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

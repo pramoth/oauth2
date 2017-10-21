@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ErrorResponse.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oauth2</a> &gt; <a href="index.source.html" class="el_package">com.pamarin.oauth2.model</a> &gt; <span class="el_source">ErrorResponse.java</span></div><h1>ErrorResponse.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2017 Pamarin.com
+ */
+package com.pamarin.oauth2.model;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pamarin.oauth2.validator.ValidUri;
+import java.io.IOException;
+import java.util.logging.Level;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import static org.springframework.util.StringUtils.hasText;
+
+/**
+ * @author jittagornp &lt;http://jittagornp.me&gt;
+ * create : 2017/09/26
+ */
+<span class="fc" id="L24">public class ErrorResponse {</span>
+
+<span class="fc" id="L26">    private static final Logger LOG = LoggerFactory.getLogger(ErrorResponse.class);</span>
+
+<span class="fc" id="L28">    private final ValidUri.Validator validUriValidator = new ValidUri.Validator();</span>
+
+    private String error;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonProperty(&quot;error_description&quot;)
+    private String errorDescription;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonProperty(&quot;error_uri&quot;)
+    private String errorUri;
+
+    public String getError() {
+<span class="fc" id="L41">        return error;</span>
+    }
+
+    public void setError(String error) {
+<span class="fc" id="L45">        this.error = error;</span>
+<span class="fc" id="L46">    }</span>
+
+    public String getErrorDescription() {
+<span class="fc" id="L49">        return errorDescription;</span>
+    }
+
+    public void setErrorDescription(String errorDescription) {
+<span class="fc" id="L53">        this.errorDescription = errorDescription;</span>
+<span class="fc" id="L54">    }</span>
+
+    public String getErrorUri() {
+<span class="fc" id="L57">        return errorUri;</span>
+    }
+
+    public void setErrorUri(String errorUri) {
+<span class="fc" id="L61">        this.errorUri = errorUri;</span>
+<span class="fc" id="L62">    }</span>
+
+    public String toJSON() throws JsonProcessingException {
+<span class="fc" id="L65">        return new ObjectMapper().writeValueAsString(this);</span>
+    }
+
+    public String buildQuerystring() {
+<span class="fc" id="L69">        StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L70">        builder.append(&quot;error=&quot;)</span>
+<span class="fc" id="L71">                .append(error);</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        if (hasText(errorDescription)) {</span>
+<span class="fc" id="L73">            builder.append(&quot;&amp;error_description=&quot;)</span>
+<span class="fc" id="L74">                    .append(errorDescription);</span>
+        }
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (hasText(errorUri)) {</span>
+<span class="fc" id="L77">            builder.append(&quot;&amp;error_uri=&quot;)</span>
+<span class="fc" id="L78">                    .append(errorUri);</span>
+        }
+<span class="fc" id="L80">        return builder.toString();</span>
+    }
+
+<span class="fc" id="L83">    public static class Builder {</span>
+
+        private String error;
+
+        private String errorDescription;
+
+        private String errorUri;
+
+        public Builder setError(String error) {
+<span class="fc" id="L92">            this.error = error;</span>
+<span class="fc" id="L93">            return this;</span>
+        }
+
+        public Builder setErrorDescription(String errorDescription) {
+<span class="fc" id="L97">            this.errorDescription = errorDescription;</span>
+<span class="fc" id="L98">            return this;</span>
+        }
+
+        public Builder setErrorUri(String errorUri) {
+<span class="fc" id="L102">            this.errorUri = errorUri;</span>
+<span class="fc" id="L103">            return this;</span>
+        }
+
+        public ErrorResponse build() {
+<span class="fc" id="L107">            ErrorResponse response = new ErrorResponse();</span>
+<span class="fc" id="L108">            response.setError(error);</span>
+<span class="fc" id="L109">            response.setErrorDescription(errorDescription);</span>
+<span class="fc" id="L110">            response.setErrorUri(errorUri);</span>
+<span class="fc" id="L111">            return response;</span>
+        }
+    }
+
+    public String makeRedirectUri(String redirectUri) {
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (!hasText(redirectUri)) {</span>
+<span class="fc" id="L117">            throw new IllegalArgumentException(&quot;Required redirectUri.&quot;);</span>
+        }
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        return redirectUri + (redirectUri.contains(&quot;?&quot;) ? &quot;&amp;&quot; : &quot;?&quot;)</span>
+<span class="fc" id="L120">                + buildQuerystring();</span>
+    }
+
+    public void returnError(HttpServletRequest request, HttpServletResponse response) throws IOException {
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (isProduceJSON(request)) {</span>
+<span class="fc" id="L125">            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);</span>
+<span class="fc" id="L126">            response.getWriter().print(this.toJSON());</span>
+        } else {
+<span class="fc" id="L128">            String uri = request.getParameter(&quot;redirect_uri&quot;);</span>
+<span class="fc bfc" id="L129" title="All 4 branches covered.">            if (hasText(uri) &amp;&amp; validUriValidator.isValid(uri)) {</span>
+<span class="fc" id="L130">                response.sendRedirect(makeRedirectUri(uri));</span>
+            } else {
+<span class="fc" id="L132">                response.setContentType(MediaType.TEXT_HTML_VALUE);</span>
+<span class="fc" id="L133">                response.getWriter().print(getError());</span>
+            }
+        }
+<span class="fc" id="L136">    }</span>
+
+    private boolean isProduceJSON(HttpServletRequest request) {
+<span class="fc" id="L139">        return request.getRequestURI()</span>
+<span class="fc" id="L140">                .matches(&quot;\\/oauth\\/v.*\\/token&quot;);</span>
+    }
+
+    /**
+     * The request is missing a required parameter, includes an unsupported
+     * parameter value (other than grant type), repeats a parameter, includes
+     * multiple credentials, utilizes more than one mechanism for authenticating
+     * the client, or is otherwise malformed.
+     *
+     * @return response
+     */
+    public static ErrorResponse invalidRequest() {
+<span class="fc" id="L152">        return new Builder()</span>
+<span class="fc" id="L153">                .setError(&quot;invalid_request&quot;)</span>
+<span class="fc" id="L154">                .build();</span>
+    }
+
+    /**
+     * The resource owner or authorization server denied the request.
+     *
+     * @return response
+     */
+    public static ErrorResponse accessDenied() {
+<span class="nc" id="L163">        return new Builder()</span>
+<span class="nc" id="L164">                .setError(&quot;access_denied&quot;)</span>
+<span class="nc" id="L165">                .build();</span>
+    }
+
+    /**
+     * The authorization server does not support obtaining an authorization code
+     * using this method.
+     *
+     * @return response
+     */
+    public static ErrorResponse unsupportedResponseType() {
+<span class="fc" id="L175">        return new Builder()</span>
+<span class="fc" id="L176">                .setError(&quot;unsupported_response_type&quot;)</span>
+<span class="fc" id="L177">                .build();</span>
+    }
+
+    /**
+     * The authorization server encountered an unexpected condition that
+     * prevented it from fulfilling the request. (This error code is needed
+     * because a 500 Internal Server Error HTTP status code cannot be returned
+     * to the client via an HTTP redirect.)
+     *
+     * @return response
+     */
+    public static ErrorResponse serverError() {
+<span class="fc" id="L189">        return new Builder()</span>
+<span class="fc" id="L190">                .setError(&quot;server_error&quot;)</span>
+<span class="fc" id="L191">                .build();</span>
+    }
+
+    /**
+     * The authorization server is currently unable to handle the request due to
+     * a temporary overloading or maintenance of the server. (This error code is
+     * needed because a 503 Service Unavailable HTTP status code cannot be
+     * returned to the client via an HTTP redirect.)
+     *
+     * @return response
+     */
+    public static ErrorResponse temporarilyUnavailable() {
+<span class="nc" id="L203">        return new Builder()</span>
+<span class="nc" id="L204">                .setError(&quot;temporarily_unavailable&quot;)</span>
+<span class="nc" id="L205">                .build();</span>
+    }
+
+    /**
+     * Client authentication failed (e.g., unknown client, no client
+     * authentication included, or unsupported authentication method). The
+     * authorization server MAY return an HTTP 401 (Unauthorized) status code to
+     * indicate which HTTP authentication schemes are supported. If the client
+     * attempted to authenticate via the &quot;Authorization&quot; request header field,
+     * the authorization server MUST respond with an HTTP 401 (Unauthorized)
+     * status code and include the &quot;WWW-Authenticate&quot; response header field
+     * matching the authentication scheme used by the client.
+     *
+     * @return response
+     */
+    public static ErrorResponse invalidClient() {
+<span class="fc" id="L221">        return new Builder()</span>
+<span class="fc" id="L222">                .setError(&quot;invalid_client&quot;)</span>
+<span class="fc" id="L223">                .build();</span>
+    }
+
+    /**
+     * The provided authorization grant (e.g., authorization code, resource
+     * owner credentials) or refresh token is invalid, expired, revoked, does
+     * not match the redirection URI used in the authorization request, or was
+     * issued to another client.
+     *
+     * @return response
+     */
+    public static ErrorResponse invalidGrant() {
+<span class="fc" id="L235">        return new Builder()</span>
+<span class="fc" id="L236">                .setError(&quot;invalid_grant&quot;)</span>
+<span class="fc" id="L237">                .build();</span>
+    }
+
+    /**
+     * The authenticated client is not authorized to use this authorization
+     * grant type.
+     *
+     * @return response
+     */
+    public static ErrorResponse unauthorizedClient() {
+<span class="nc" id="L247">        return new Builder()</span>
+<span class="nc" id="L248">                .setError(&quot;unauthorized_client&quot;)</span>
+<span class="nc" id="L249">                .build();</span>
+    }
+
+    /**
+     * The authorization grant type is not supported by the authorization
+     * server.
+     *
+     * @return response
+     */
+    public static ErrorResponse unsupportedGrantType() {
+<span class="nc" id="L259">        return new Builder()</span>
+<span class="nc" id="L260">                .setError(&quot;unsupported_grant_type&quot;)</span>
+<span class="nc" id="L261">                .build();</span>
+    }
+
+    /**
+     * The requested scope is invalid, unknown, malformed, or exceeds the scope
+     * granted by the resource owner.
+     *
+     * @return response
+     */
+    public static ErrorResponse invalidScope() {
+<span class="fc" id="L271">        return new Builder()</span>
+<span class="fc" id="L272">                .setError(&quot;invalid_scope&quot;)</span>
+<span class="fc" id="L273">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

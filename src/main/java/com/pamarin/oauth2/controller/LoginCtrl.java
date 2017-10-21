@@ -3,20 +3,14 @@
  */
 package com.pamarin.oauth2.controller;
 
-import com.pamarin.oauth2.DefaultAuthorizationRequest;
-import com.pamarin.oauth2.DefaultScope;
-import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.provider.HostUrlProvider;
-import com.pamarin.oauth2.service.ClientVerification;
-import com.pamarin.oauth2.service.ScopeVerification;
-import com.pamarin.oauth2.validator.ResponseType;
+import com.pamarin.oauth2.service.AuthorizationRequestVerification;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import static org.springframework.util.StringUtils.hasText;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,45 +28,29 @@ public class LoginCtrl {
     private HostUrlProvider hostUrlProvider;
 
     @Autowired
-    private ResponseType.Validator responseTypeValidator;
-
-    @Autowired
-    private ClientVerification clientVerification;
-
-    @Autowired
-    private ScopeVerification scopeVerification;
-
-    @Autowired
-    private DefaultScope defaultScope;
+    private AuthorizationRequestVerification requestVerification;
 
     @GetMapping("/login")
-    public ModelAndView login(HttpServletRequest request) throws MissingServletRequestParameterException {
-        AuthorizationRequest authReq = new AuthorizationRequest.Builder()
-                .setResponseType(request.getParameter("response_type"))
-                .setClientId(request.getParameter("client_id"))
-                .setRedirectUri(request.getParameter("redirect_uri"))
-                .setScope(request.getParameter("scope"))
-                .setState(request.getParameter("state"))
+    public ModelAndView login(HttpServletRequest httpReq) throws MissingServletRequestParameterException {
+        AuthorizationRequest req = new AuthorizationRequest.Builder()
+                .setResponseType(httpReq.getParameter("response_type"))
+                .setClientId(httpReq.getParameter("client_id"))
+                .setRedirectUri(httpReq.getParameter("redirect_uri"))
+                .setScope(httpReq.getParameter("scope"))
+                .setState(httpReq.getParameter("state"))
                 .build();
-        if (!authReq.haveSomeParameters()) {
+        if (!req.haveSomeParameters()) {
             return new ModelAndView(
                     "login",
                     "processUrl",
                     hostUrlProvider.provide() + "/login");
         }
-        authReq.validateParameters();
-        if (!responseTypeValidator.isValid(authReq.getResponseType())) {
-            throw new InvalidResponseTypeException(authReq.getResponseType(), "Invalid responseType");
-        }
-        clientVerification.verifyClientIdAndRedirectUri(authReq.getClientId(), authReq.getRedirectUri());
-        if (!hasText(authReq.getScope())) {
-            authReq.setScope(defaultScope.getDefault());
-        }
-        scopeVerification.verifyByClientIdAndScope(authReq.getClientId(), authReq.getScope());
+        req.validateParameters();
+        requestVerification.verify(req);
         return new ModelAndView(
                 "login",
                 "processUrl",
-                hostUrlProvider.provide() + "/login?" + authReq.buildQuerystring());
+                hostUrlProvider.provide() + "/login?" + req.buildQuerystring());
     }
 
     @PostMapping("/login")

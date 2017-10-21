@@ -43,9 +43,6 @@ public class AuthorizationRequest {
     }
 
     public String getScope() {
-        if (!hasText(scope)) {
-            scope = "read";
-        }
         return scope;
     }
 

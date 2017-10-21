@@ -32,7 +32,7 @@ public class OAuthConf {
 
     @Bean
     public DefaultScope newDefaultScope() {
-        return () -> "read";
+        return () -> "555";
     }
 
     @Bean

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LoginCtrl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">oauth2</a> &gt; <a href="index.source.html" class="el_package">com.pamarin.oauth2.controller</a> &gt; <span class="el_source">LoginCtrl.java</span></div><h1>LoginCtrl.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2017 Pamarin.com
+ */
+package com.pamarin.oauth2.controller;
+
+import com.pamarin.oauth2.model.AuthorizationRequest;
+import com.pamarin.oauth2.provider.HostUrlProvider;
+import com.pamarin.oauth2.service.AuthorizationRequestVerification;
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * @author jittagornp &lt;http://jittagornp.me&gt;
+ * create : 2017/09/24
+ */
+@Controller
+<span class="fc" id="L25">public class LoginCtrl {</span>
+
+    @Autowired
+    private HostUrlProvider hostUrlProvider;
+
+    @Autowired
+    private AuthorizationRequestVerification requestVerification;
+
+    @GetMapping(&quot;/login&quot;)
+    public ModelAndView login(HttpServletRequest httpReq) throws MissingServletRequestParameterException {
+<span class="fc" id="L35">        AuthorizationRequest req = new AuthorizationRequest.Builder()</span>
+<span class="fc" id="L36">                .setResponseType(httpReq.getParameter(&quot;response_type&quot;))</span>
+<span class="fc" id="L37">                .setClientId(httpReq.getParameter(&quot;client_id&quot;))</span>
+<span class="fc" id="L38">                .setRedirectUri(httpReq.getParameter(&quot;redirect_uri&quot;))</span>
+<span class="fc" id="L39">                .setScope(httpReq.getParameter(&quot;scope&quot;))</span>
+<span class="fc" id="L40">                .setState(httpReq.getParameter(&quot;state&quot;))</span>
+<span class="fc" id="L41">                .build();</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (!req.haveSomeParameters()) {</span>
+<span class="fc" id="L43">            return new ModelAndView(</span>
+                    &quot;login&quot;,
+                    &quot;processUrl&quot;,
+<span class="fc" id="L46">                    hostUrlProvider.provide() + &quot;/login&quot;);</span>
+        }
+<span class="fc" id="L48">        req.validateParameters();</span>
+<span class="fc" id="L49">        requestVerification.verify(req);</span>
+<span class="fc" id="L50">        return new ModelAndView(</span>
+                &quot;login&quot;,
+                &quot;processUrl&quot;,
+<span class="fc" id="L53">                hostUrlProvider.provide() + &quot;/login?&quot; + req.buildQuerystring());</span>
+    }
+
+    @PostMapping(&quot;/login&quot;)
+    public void postLogin(
+            @RequestParam(value = &quot;response_type&quot;, required = false) String responseType,
+            @RequestParam(value = &quot;client_id&quot;, required = false) String clientId,
+            @RequestParam(value = &quot;redirect_uri&quot;, required = false) String redirectUri,
+            @RequestParam(value = &quot;scope&quot;, required = false) String scope,
+            @RequestParam(value = &quot;state&quot;, required = false) String state,
+            @RequestParam(&quot;username&quot;) String username,
+            @RequestParam(&quot;password&quot;) String password,
+            HttpServletResponse response
+    ) throws IOException {
+//        response.sendRedirect(hostUrlProvider.provide() + &quot;/login?error=invalid_username_password&quot; + makeAuthorizationRequest(
+//                responseType,
+//                clientId,
+//                redirectUri,
+//                scope,
+//                state
+//        ).buildQuerystring());
+<span class="nc" id="L74">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

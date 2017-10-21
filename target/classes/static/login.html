@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<!--
+Copyright 2017 Pamarin.com
+-->
+<html>
+    <head>
+        <title>Login</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>Login</div>
+        <form id="login_form" th:attr="action=${processUrl}" method="post">
+            username : <input id="login_username" name="username" type="text"/>
+            password : <input id="login_password" name="password" type="password"/>
+            <button type="submit">login</button>
+        </form>
+    </body>
+</html>

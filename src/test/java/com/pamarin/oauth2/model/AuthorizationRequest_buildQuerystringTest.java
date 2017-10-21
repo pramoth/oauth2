@@ -18,6 +18,7 @@ public class AuthorizationRequest_buildQuerystringTest {
                 .setResponseType("code")
                 .setClientId("1234")
                 .setRedirectUri("https://pamarin.com")
+                .setScope("read")
                 .build();
         String output = input.buildQuerystring();
         String expected = "response_type=code&client_id=1234&redirect_uri=https://pamarin.com&scope=read";
@@ -31,6 +32,7 @@ public class AuthorizationRequest_buildQuerystringTest {
                 .setClientId("1234")
                 .setRedirectUri("https://pamarin.com")
                 .setState("XYZ")
+                .setScope("read")
                 .build();
         String output = input.buildQuerystring();
         String expected = "response_type=token&client_id=1234&redirect_uri=https://pamarin.com&scope=read&state=XYZ";
@@ -44,6 +46,7 @@ public class AuthorizationRequest_buildQuerystringTest {
                 .setClientId("1234")
                 .setRedirectUri("https://pamarin.com")
                 .setState("XYZ")
+                .setScope("read")
                 .build();
         String output = input.buildQuerystring();
         String expected = "response_type=code&client_id=1234&redirect_uri=https://pamarin.com&scope=read&state=XYZ";

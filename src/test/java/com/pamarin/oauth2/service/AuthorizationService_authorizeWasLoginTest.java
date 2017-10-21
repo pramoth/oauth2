@@ -48,6 +48,9 @@ public class AuthorizationService_authorizeWasLoginTest {
     @Mock
     private ApprovalService approvalService;
 
+    @Mock
+    private AuthorizationRequestVerification requestVerification;
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
@@ -55,21 +58,6 @@ public class AuthorizationService_authorizeWasLoginTest {
         when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
         when(approvalService.wasApprovedByUserIdAndClientId(any(Long.class), any(String.class)))
                 .thenReturn(true);
-    }
-
-    @Test(expected = InvalidResponseTypeException.class)
-    public void shouldBeThrowUnsupportedOperationException_whenInvalidResponseType() {
-        when(responseTypeValidator.isValid(any(String.class))).thenReturn(false);
-
-        AuthorizationRequest input = new AuthorizationRequest.Builder()
-                .setClientId("1234")
-                .setRedirectUri("https://pamarin.com/callback")
-                .setResponseType("ABC")
-                .setScope("read")
-                .setState("XYZ")
-                .build();
-
-        String output = authorizationService.authorize(input);
     }
 
     @Test(expected = RequireApprovalException.class)
@@ -80,7 +68,7 @@ public class AuthorizationService_authorizeWasLoginTest {
         AuthorizationRequest input = new AuthorizationRequest.Builder()
                 .setClientId("1234")
                 .setRedirectUri("https://pamarin.com/callback")
-                .setResponseType("ABC")
+                .setResponseType("code")
                 .setScope("read")
                 .setState("XYZ")
                 .build();

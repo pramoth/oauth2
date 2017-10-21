@@ -3,7 +3,6 @@
  */
 package com.pamarin.oauth2.service;
 
-import com.pamarin.oauth2.exception.InvalidResponseTypeException;
 import com.pamarin.oauth2.exception.RequireApprovalException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.model.AccessTokenResponse;
@@ -11,7 +10,6 @@ import com.pamarin.oauth2.model.AuthorizationResponse;
 import com.pamarin.oauth2.provider.HostUrlProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.pamarin.oauth2.validator.ResponseType;
 
 /**
  * @author jittagornp <http://jittagornp.me>
@@ -24,15 +22,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private HostUrlProvider hostUrlProvider;
 
     @Autowired
-    private ResponseType.Validator responseTypeValidator;
-
-    @Autowired
-    private ClientVerification clientVerification;
-
-    @Autowired
-    private ScopeVerification scopeVerification;
-
-    @Autowired
     private LoginSession loginSession;
 
     @Autowired
@@ -43,49 +32,47 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Autowired
     private ApprovalService approvalService;
+    
+    @Autowired
+    private AuthorizationRequestVerification requestVerification;
 
     @Override
-    public String authorize(AuthorizationRequest authReq) {
-        if (!responseTypeValidator.isValid(authReq.getResponseType())) {
-            throw new InvalidResponseTypeException(authReq.getResponseType(), "Invalid responseType.");
-        }
-
-        clientVerification.verifyClientIdAndRedirectUri(authReq.getClientId(), authReq.getRedirectUri());
-        scopeVerification.verifyByClientIdAndScope(authReq.getClientId(), authReq.getScope());
+    public String authorize(AuthorizationRequest req) {
+        requestVerification.verify(req);
         if (loginSession.wasCreated()) {
-            if (!approvalService.wasApprovedByUserIdAndClientId(loginSession.getUserId(), authReq.getClientId())) {
+            if (!approvalService.wasApprovedByUserIdAndClientId(loginSession.getUserId(), req.getClientId())) {
                 throw new RequireApprovalException();
             }
-            return obtainingAuthorization(authReq);
+            return obtainingAuthorization(req);
         } else {
-            return hostUrlProvider.provide() + "/login?" + authReq.buildQuerystring();
+            return hostUrlProvider.provide() + "/login?" + req.buildQuerystring();
         }
     }
 
-    private String obtainingAuthorization(AuthorizationRequest authReq) {
-        if (authReq.responseTypeIsCode()) {
-            return generateAuthorizationCode(authReq);
+    private String obtainingAuthorization(AuthorizationRequest req) {
+        if (req.responseTypeIsCode()) {
+            return generateAuthorizationCode(req);
         }
 
-        return generateAccessToken(authReq);
+        return generateAccessToken(req);
     }
 
     //https://tools.ietf.org/html/rfc6749#section-4.1.2
-    private String generateAuthorizationCode(AuthorizationRequest authReq) {
-        AuthorizationResponse response = authorizationCodeGenerator.generate(authReq);
-        if (authReq.hasStateParam()) {
-            response.setState(authReq.getState());
+    private String generateAuthorizationCode(AuthorizationRequest req) {
+        AuthorizationResponse response = authorizationCodeGenerator.generate(req);
+        if (req.hasStateParam()) {
+            response.setState(req.getState());
         }
-        String uri = authReq.getRedirectUri();
+        String uri = req.getRedirectUri();
         return uri + (uri.contains("?") ? "&" : "?") + response.buildQuerystring();
     }
 
     //https://tools.ietf.org/html/rfc6749#section-4.2.2
-    private String generateAccessToken(AuthorizationRequest authReq) {
-        AccessTokenResponse response = accessTokenGenerator.generate(authReq);
-        if (authReq.hasStateParam()) {
-            response.setState(authReq.getState());
+    private String generateAccessToken(AuthorizationRequest req) {
+        AccessTokenResponse response = accessTokenGenerator.generate(req);
+        if (req.hasStateParam()) {
+            response.setState(req.getState());
         }
-        return authReq.getRedirectUri() + "#" + response.buildQuerystringWithoutRefreshToken();
+        return req.getRedirectUri() + "#" + response.buildQuerystringWithoutRefreshToken();
     }
 }

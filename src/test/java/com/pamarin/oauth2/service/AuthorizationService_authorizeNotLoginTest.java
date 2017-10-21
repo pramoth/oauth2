@@ -25,24 +25,17 @@ public class AuthorizationService_authorizeNotLoginTest {
     private AuthorizationServiceImpl authorizationService;
 
     @Mock
-    private ResponseType.Validator responseTypeValidator;
-
-    @Mock
-    private ScopeVerification scopeVerification;
-
-    @Mock
-    private ClientVerification clientVerification;
-
-    @Mock
     private LoginSession loginSession;
 
     @Mock
     private HostUrlProvider hostUrlProvider;
 
+    @Mock
+    private AuthorizationRequestVerification requestVerification;
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
         when(hostUrlProvider.provide()).thenReturn("");
     }
 

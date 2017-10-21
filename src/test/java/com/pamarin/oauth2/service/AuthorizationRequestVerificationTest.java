@@ -15,6 +15,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import static org.mockito.Matchers.any;
 import org.mockito.Mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
@@ -71,5 +72,19 @@ public class AuthorizationRequestVerificationTest {
 
         verify(clientVerification).verifyClientIdAndRedirectUri(null, null);
         verify(scopeVerification).verifyByClientIdAndScope(null, "basic");
+    }
+    
+    @Test
+    public void shouldBeNeverCallSetScope_whenScopeIsWrite() {
+        when(responseTypeValidator.isValid(any(String.class))).thenReturn(true);
+
+        AuthorizationRequest input = new AuthorizationRequest.Builder()
+                .setScope("write")
+                .build();
+        requestVerification.verify(input);
+        
+        verify(defaultScope, never()).getDefault();
+        verify(clientVerification).verifyClientIdAndRedirectUri(null, null);
+        verify(scopeVerification).verifyByClientIdAndScope(null, "write");
     }
 }

@@ -111,7 +111,8 @@ public class HttpBasicAuthenParserTest {
         Output output = parser.parse(input);
         Output expected = new Output("test", "123456");
 
-        assertThat(output).isEqualTo(expected);
+        assertThat(output.getUsername()).isEqualTo(expected.getUsername());
+        assertThat(output.getPassword()).isEqualTo(expected.getPassword());
     }
     
      @Test
@@ -121,6 +122,7 @@ public class HttpBasicAuthenParserTest {
         Output output = parser.parse(input);
         Output expected = new Output("test", "0000");
 
-        assertThat(output).isEqualTo(expected);
+        assertThat(output.getUsername()).isEqualTo(expected.getUsername());
+        assertThat(output.getPassword()).isEqualTo(expected.getPassword());
     }
 }

@@ -21,9 +21,28 @@ public class QuerystringBuilderTest {
     }
 
     @Test
+    public void shouldBeEmptyString_whenResponseTypeIsNull() {
+        QuerystringBuilder input = new QuerystringBuilder()
+                .addParameter("response_type", null);
+        String output = input.build();
+        String expected = "";
+        assertThat(output).isEqualTo(expected);
+    }
+
+    @Test
     public void shouldBeResponseTypeIsCode() {
         QuerystringBuilder input = new QuerystringBuilder()
                 .addParameter("response_type", "code");
+        String output = input.build();
+        String expected = "response_type=code";
+        assertThat(output).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldBeResponseTypeIsCode_whenScopeIsNull() {
+        QuerystringBuilder input = new QuerystringBuilder()
+                .addParameter("response_type", "code")
+                .addParameter("scope", null);
         String output = input.build();
         String expected = "response_type=code";
         assertThat(output).isEqualTo(expected);

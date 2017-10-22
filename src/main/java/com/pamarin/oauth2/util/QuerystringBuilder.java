@@ -30,7 +30,9 @@ public class QuerystringBuilder {
     }
 
     public QuerystringBuilder addParameter(String name, Object value) {
-        getParams().put(name, value);
+        if (value != null) {
+            getParams().put(name, value);
+        }
         return this;
     }
 

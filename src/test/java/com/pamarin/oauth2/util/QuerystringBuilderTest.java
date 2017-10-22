@@ -68,5 +68,16 @@ public class QuerystringBuilderTest {
         String expected = "response_type=code&scope=read&redirect_uri=http%3A%2F%2Flocalhost%2Fcallback";
         assertThat(output).isEqualTo(expected);
     }
+    
+    @Test
+    public void shouldBeResponseTypeIsCode_andScopeIsRead_andRedirecUriIsEncodedHttpLocalhostWithQuerystring() {
+        QuerystringBuilder input = new QuerystringBuilder()
+                .addParameter("response_type", "code")
+                .addParameter("scope", "read")
+                .addParameter("redirect_uri", "http://localhost/callback?q=keyword");
+        String output = input.build();
+        String expected = "response_type=code&scope=read&redirect_uri=http%3A%2F%2Flocalhost%2Fcallback%3Fq%3Dkeyword";
+        assertThat(output).isEqualTo(expected);
+    }
 
 }

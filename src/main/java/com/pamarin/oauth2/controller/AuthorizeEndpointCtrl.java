@@ -29,7 +29,7 @@ public class AuthorizeEndpointCtrl {
             @RequestParam("response_type") String responseType,
             @RequestParam("client_id") String clientId,
             @RequestParam("redirect_uri") String redirectUri,
-            @RequestParam(value = "scope", required = false, defaultValue = "read") String scope,
+            @RequestParam(value = "scope", required = false) String scope,
             @RequestParam(name = "state", required = false) String state,
             HttpServletResponse resp
     ) throws IOException {

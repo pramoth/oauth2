@@ -3,6 +3,7 @@
  */
 package com.pamarin.oauth2.service;
 
+import com.pamarin.oauth2.PasswordEncryption;
 import com.pamarin.oauth2.exception.InvalidClientIdAndClientSecretException;
 import com.pamarin.oauth2.exception.InvalidClientIdAndRedirectUriException;
 import com.pamarin.oauth2.exception.InvalidClientIdException;
@@ -30,6 +31,9 @@ public class ClientVerificationImpl implements ClientVerification {
 
     @Autowired
     private ValidUri.Validator validUriValidator;
+    
+    @Autowired
+    private PasswordEncryption passwordEncryption;
 
     @Override
     public void verifyClientIdAndRedirectUri(String clientId, String redirectUri) {
@@ -80,7 +84,7 @@ public class ClientVerificationImpl implements ClientVerification {
             throw new InvalidClientIdException(clientId, "Empty clientSecret.");
         }
 
-        if (!secret.equals(clientSecret)) {
+        if (!passwordEncryption.matches(clientSecret, secret)) {
             throw new InvalidClientIdAndClientSecretException(
                     clientId,
                     clientSecret,

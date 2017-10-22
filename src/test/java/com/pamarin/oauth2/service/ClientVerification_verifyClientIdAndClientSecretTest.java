@@ -3,6 +3,7 @@
  */
 package com.pamarin.oauth2.service;
 
+import com.pamarin.oauth2.PasswordEncryption;
 import com.pamarin.oauth2.exception.InvalidClientIdAndClientSecretException;
 import com.pamarin.oauth2.exception.InvalidClientIdException;
 import org.junit.Before;
@@ -29,6 +30,9 @@ public class ClientVerification_verifyClientIdAndClientSecretTest {
 
     @Mock
     private ClientService clientService;
+
+    @Mock
+    private PasswordEncryption passwordEncryption;
 
     @Before
     public void initMocks() {
@@ -79,6 +83,8 @@ public class ClientVerification_verifyClientIdAndClientSecretTest {
 
         when(clientService.findClientSecretByClientId(any(String.class)))
                 .thenReturn("password");
+        when(passwordEncryption.matches(any(String.class), any(String.class)))
+                .thenReturn(false);
 
         String clientId = "123456";
         String clientSecret = "xyz";
@@ -89,6 +95,8 @@ public class ClientVerification_verifyClientIdAndClientSecretTest {
     public void shouldBeOk_whenValidClientSecret() {
         when(clientService.findClientSecretByClientId(any(String.class)))
                 .thenReturn("password");
+        when(passwordEncryption.matches(any(String.class), any(String.class)))
+                .thenReturn(true);
 
         String clientId = "123456";
         String clientSecret = "password";

@@ -33,6 +33,11 @@ import org.springframework.context.annotation.Configuration;
 public class OAuthConf {
 
     @Bean
+    public PasswordEncryption newPasswordEncryption() {
+        return (rawPassword, encryptedPassword) -> true;
+    }
+
+    @Bean
     public UserVerification newUserVerification() {
         return (username, password) -> {
             boolean isCorrect = "test".equals(username)

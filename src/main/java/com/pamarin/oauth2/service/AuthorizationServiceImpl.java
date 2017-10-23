@@ -32,15 +32,22 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Autowired
     private ApprovalService approvalService;
-    
+
     @Autowired
     private AuthorizationRequestVerification requestVerification;
+
+    private boolean wasApprovedClient(String clientId) {
+        return approvalService.wasApprovedByUserIdAndClientId(
+                loginSession.getUserId(),
+                clientId
+        );
+    }
 
     @Override
     public String authorize(AuthorizationRequest req) {
         requestVerification.verify(req);
         if (loginSession.wasCreated()) {
-            if (!approvalService.wasApprovedByUserIdAndClientId(loginSession.getUserId(), req.getClientId())) {
+            if (!wasApprovedClient(req.getClientId())) {
                 throw new RequireApprovalException();
             }
             return obtainingAuthorization(req);
@@ -69,10 +76,15 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     //https://tools.ietf.org/html/rfc6749#section-4.2.2
     private String generateAccessToken(AuthorizationRequest req) {
-        AccessTokenResponse response = accessTokenGenerator.generate(req);
+        AccessTokenResponse resp = accessTokenGenerator.generate(req);
         if (req.hasStateParam()) {
-            response.setState(req.getState());
+            resp.setState(req.getState());
         }
-        return req.getRedirectUri() + "#" + response.buildQuerystringWithoutRefreshToken();
+        return req.getRedirectUri() + "#" + resp.buildQuerystringWithoutRefreshToken();
+    }
+
+    @Override
+    public String allow(AuthorizationRequest req) {
+        return hostUrlProvider.provide() + "?" + req.buildQuerystring();
     }
 }

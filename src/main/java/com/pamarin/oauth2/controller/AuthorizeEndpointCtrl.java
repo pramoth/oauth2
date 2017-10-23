@@ -6,6 +6,7 @@ package com.pamarin.oauth2.controller;
 import com.pamarin.oauth2.exception.RequireApprovalException;
 import com.pamarin.oauth2.model.AuthorizationRequest;
 import com.pamarin.oauth2.service.AuthorizationService;
+import com.pamarin.oauth2.view.ModelAndViewBuilder;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,20 +35,41 @@ public class AuthorizeEndpointCtrl {
             @RequestParam("redirect_uri") String redirectUri,
             @RequestParam(value = "scope", required = false) String scope,
             @RequestParam(name = "state", required = false) String state,
-            HttpServletResponse resp
+            HttpServletResponse httpResp
     ) throws IOException {
+        AuthorizationRequest req = new AuthorizationRequest.Builder()
+                .setClientId(clientId)
+                .setRedirectUri(redirectUri)
+                .setResponseType(responseType)
+                .setScope(scope)
+                .setState(state)
+                .build();
         try {
-            resp.sendRedirect(authorizationService.authorize(new AuthorizationRequest.Builder()
-                    .setClientId(clientId)
-                    .setRedirectUri(redirectUri)
-                    .setResponseType(responseType)
-                    .setScope(scope)
-                    .setState(state)
-                    .build()
-            ));
+            httpResp.sendRedirect(authorizationService.authorize(req));
             return null;
         } catch (RequireApprovalException ex) {
-            return new ModelAndView("authorize");
+            return new ModelAndViewBuilder()
+                    .setName("authorize")
+                    .addAttribute("processUrl", "/oauth/v1/authorize?" + req.buildQuerystring())
+                    .build();
         }
+    }
+
+    @PostMapping(params = "answer=allow")
+    public void allow(
+            @RequestParam("response_type") String responseType,
+            @RequestParam("client_id") String clientId,
+            @RequestParam("redirect_uri") String redirectUri,
+            @RequestParam(value = "scope", required = false) String scope,
+            @RequestParam(name = "state", required = false) String state,
+            HttpServletResponse httpResp
+    ) throws IOException {
+        httpResp.sendRedirect(authorizationService.allow(new AuthorizationRequest.Builder()
+                .setClientId(clientId)
+                .setRedirectUri(redirectUri)
+                .setResponseType(responseType)
+                .setScope(scope)
+                .setState(state)
+                .build()));
     }
 }

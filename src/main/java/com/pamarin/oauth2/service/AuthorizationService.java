@@ -11,6 +11,8 @@ import com.pamarin.oauth2.model.AuthorizationRequest;
  */
 public interface AuthorizationService {
 
-    String authorize(AuthorizationRequest authReq);
+    String authorize(AuthorizationRequest req);
+    
+    String allow(AuthorizationRequest req);
 
 }

@@ -3,6 +3,7 @@
  */
 package com.pamarin.oauth2.model;
 
+import com.pamarin.oauth2.util.QuerystringBuilder;
 import static org.springframework.util.StringUtils.hasText;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 
@@ -101,22 +102,13 @@ public class AuthorizationRequest {
     }
 
     public String buildQuerystring() {
-        StringBuilder builder = new StringBuilder()
-                .append("response_type=")
-                .append(responseType)
-                .append("&client_id=")
-                .append(clientId)
-                .append("&redirect_uri=")
-                .append(redirectUri)
-                .append("&scope=")
-                .append(getScope());
-
-        if (hasStateParam()) {
-            builder.append("&state=")
-                    .append(state);
-        }
-
-        return builder.toString();
+        return new QuerystringBuilder()
+                .addParameter("response_type", getResponseType())
+                .addParameter("client_id", getClientId())
+                .addParameter("redirect_uri", getRedirectUri())
+                .addParameter("scope", getScope())
+                .addParameter("state", getState())
+                .build();
     }
 
     public static class Builder {

@@ -62,7 +62,7 @@ public class LoginCtrl_postLoginTest {
                         .param("password", "AAA")
         )
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl("http://localhost/login?error=invalid_username_password&response_type=code&client_id=000000&redirect_uri=http://localhost/callback&scope=read"));
+                .andExpect(redirectedUrl("http://localhost/login?error=invalid_username_password&response_type=code&client_id=000000&redirect_uri=http%3A%2F%2Flocalhost%2Fcallback&scope=read"));
     }
 
     @Test

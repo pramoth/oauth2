@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pamarin.oauth2.util.QuerystringBuilder;
 import com.pamarin.oauth2.validator.ValidUri;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -66,18 +67,11 @@ public class ErrorResponse {
     }
 
     public String buildQuerystring() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("error=")
-                .append(error);
-        if (hasText(errorDescription)) {
-            builder.append("&error_description=")
-                    .append(errorDescription);
-        }
-        if (hasText(errorUri)) {
-            builder.append("&error_uri=")
-                    .append(errorUri);
-        }
-        return builder.toString();
+        return new QuerystringBuilder()
+                .addParameter("error", getError())
+                .addParameter("error_description", getErrorDescription())
+                .addParameter("error_uri", getErrorUri())
+                .build();
     }
 
     public static class Builder {

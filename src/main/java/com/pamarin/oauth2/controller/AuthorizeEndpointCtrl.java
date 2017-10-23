@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,12 +21,13 @@ import org.springframework.web.servlet.ModelAndView;
  * create : 2017/09/24
  */
 @Controller
+@RequestMapping("/oauth/v1/authorize")
 public class AuthorizeEndpointCtrl {
 
     @Autowired
     private AuthorizationService authorizationService;
 
-    @GetMapping("/oauth/v1/authorize")
+    @GetMapping
     public ModelAndView authorize(
             @RequestParam("response_type") String responseType,
             @RequestParam("client_id") String clientId,

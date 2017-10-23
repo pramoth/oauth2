@@ -50,7 +50,7 @@ public class OAuthConf {
 
     @Bean
     public DefaultScope newDefaultScope() {
-        return () -> "555";
+        return () -> "read";
     }
 
     @Bean
@@ -106,7 +106,7 @@ public class OAuthConf {
 
     @Bean
     public AuthorizationCodeGenerator newAuthorizationCodeGenerator() {
-        return (authReq) -> new AuthorizationResponse.Builder()
+        return (req) -> new AuthorizationResponse.Builder()
                 .setCode(UUID.randomUUID().toString())
                 .build();
     }

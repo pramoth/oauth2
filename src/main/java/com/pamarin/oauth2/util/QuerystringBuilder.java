@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * @author jittagornp <http://jittagornp.me>
@@ -20,17 +21,17 @@ public class QuerystringBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuerystringBuilder.class);
 
-    private Map<String, Object> params;
+    private Map<String, String> params;
 
-    private Map<String, Object> getParams() {
+    private Map<String, String> getParams() {
         if (params == null) {
             params = new LinkedHashMap<>();
         }
         return params;
     }
 
-    public QuerystringBuilder addParameter(String name, Object value) {
-        if (value != null) {
+    public QuerystringBuilder addParameter(String name, String value) {
+        if (hasText(value)) {
             getParams().put(name, value);
         }
         return this;
@@ -49,7 +50,7 @@ public class QuerystringBuilder {
         return getParams().entrySet()
                 .stream()
                 .map(param -> {
-                    return param.getKey() + "=" + encode(String.valueOf(param.getValue()));
+                    return param.getKey() + "=" + encode(param.getValue());
                 }).collect(Collectors.joining("&"));
     }
 }

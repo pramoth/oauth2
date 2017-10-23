@@ -3,6 +3,7 @@
  */
 package com.pamarin.oauth2.model;
 
+import com.pamarin.oauth2.util.QuerystringBuilder;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -32,14 +33,10 @@ public class AuthorizationResponse {
     }
 
     public String buildQuerystring() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("code=")
-                .append(code);
-        if (hasText(state)) {
-            builder.append("&state=")
-                    .append(state);
-        }
-        return builder.toString();
+        return new QuerystringBuilder()
+                .addParameter("code", getCode())
+                .addParameter("state", getState())
+                .build();
     }
 
     public static class Builder {

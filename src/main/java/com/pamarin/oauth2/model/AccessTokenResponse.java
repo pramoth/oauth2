@@ -5,11 +5,12 @@ package com.pamarin.oauth2.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pamarin.oauth2.util.QuerystringBuilder;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
  * https://tools.ietf.org/html/rfc6749#section-4.1.4
- * 
+ *
  * @author jittagornp <http://jittagornp.me>
  * create : 2017/09/25
  */
@@ -71,18 +72,12 @@ public class AccessTokenResponse {
     }
 
     public String buildQuerystringWithoutRefreshToken() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("access_token=")
-                .append(accessToken);
-        if (hasText(state)) {
-            builder.append("&state=")
-                    .append(state);
-        }
-        builder.append("&token_type=")
-                .append(tokenType)
-                .append("&expires_in=")
-                .append(expiresIn);
-        return builder.toString();
+        return new QuerystringBuilder()
+                .addParameter("access_token", getAccessToken())
+                .addParameter("state", getState())
+                .addParameter("token_type", getTokenType())
+                .addParameter("expires_in", String.valueOf(getExpiresIn()))
+                .build();
     }
 
     public static class Builder {

@@ -21,7 +21,7 @@ public class AuthorizationRequest_buildQuerystringTest {
                 .setScope("read")
                 .build();
         String output = input.buildQuerystring();
-        String expected = "response_type=code&client_id=1234&redirect_uri=https://pamarin.com&scope=read";
+        String expected = "response_type=code&client_id=1234&redirect_uri=https%3A%2F%2Fpamarin.com&scope=read";
         assertThat(output).isEqualTo(expected);
     }
 
@@ -35,7 +35,7 @@ public class AuthorizationRequest_buildQuerystringTest {
                 .setScope("read")
                 .build();
         String output = input.buildQuerystring();
-        String expected = "response_type=token&client_id=1234&redirect_uri=https://pamarin.com&scope=read&state=XYZ";
+        String expected = "response_type=token&client_id=1234&redirect_uri=https%3A%2F%2Fpamarin.com&scope=read&state=XYZ";
         assertThat(output).isEqualTo(expected);
     }
 
@@ -49,7 +49,7 @@ public class AuthorizationRequest_buildQuerystringTest {
                 .setScope("read")
                 .build();
         String output = input.buildQuerystring();
-        String expected = "response_type=code&client_id=1234&redirect_uri=https://pamarin.com&scope=read&state=XYZ";
+        String expected = "response_type=code&client_id=1234&redirect_uri=https%3A%2F%2Fpamarin.com&scope=read&state=XYZ";
         assertThat(output).isEqualTo(expected);
     }
 
